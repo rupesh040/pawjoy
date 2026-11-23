@@ -1,18 +1,18 @@
 "use client";
- 
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import contentData from "@/data/content.json";
 import { HeaderData } from "@/data/type";
- 
+
 interface NavbarProps {
   data?: HeaderData;
 }
- 
+
 type Pill = { left: number; width: number };
 type HoverPill = Pill & { visible: boolean };
- 
+
 function PawIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 200 200" fill="currentColor" className={className}>
@@ -24,11 +24,7 @@ function PawIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
-/**
- * CTA button with: magnetic pull toward the cursor, idle shine sweep,
- * click ripple and an optional paw that grows in on hover.
- */
+
 function CtaButton({
   href,
   label,
@@ -49,7 +45,7 @@ function CtaButton({
   const zoneRef = useRef<HTMLSpanElement>(null);
   const idRef = useRef(0);
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
- 
+
   const onMove = (e: React.MouseEvent<HTMLSpanElement>) => {
     const el = zoneRef.current;
     if (!el) return;
@@ -57,14 +53,14 @@ function CtaButton({
     el.style.setProperty("--bx", String((e.clientX - (r.left + r.width / 2)) * 0.22));
     el.style.setProperty("--by", String((e.clientY - (r.top + r.height / 2)) * 0.3));
   };
- 
+
   const onLeave = () => {
     const el = zoneRef.current;
     if (!el) return;
     el.style.setProperty("--bx", "0");
     el.style.setProperty("--by", "0");
   };
- 
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
     const id = ++idRef.current;
@@ -72,7 +68,7 @@ function CtaButton({
     setTimeout(() => setRipples((p) => p.filter((i) => i.id !== id)), 700);
     onClick(e);
   };
- 
+
   const link = (
     <Link
       href={href}
@@ -106,9 +102,9 @@ function CtaButton({
       ))}
     </Link>
   );
- 
+
   if (!magnetic) return link;
- 
+
   return (
     <span
       ref={zoneRef}
@@ -120,7 +116,7 @@ function CtaButton({
     </span>
   );
 }
- 
+
 export default function Navbar({ data: customData }: NavbarProps) {
   const headerData =
     customData ||
@@ -132,40 +128,35 @@ export default function Navbar({ data: customData }: NavbarProps) {
   );
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
- 
-  // animation state
+
   const headerRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const [activePill, setActivePill] = useState<Pill | null>(null);
   const [hoverPill, setHoverPill] = useState<HoverPill | null>(null);
- 
-  // While a click-triggered smooth scroll is running, the scroll-spy is paused
-  // so the active pill goes straight to the clicked link instead of hopping
-  // through every section on the way.
+
   const spyLockRef = useRef(false);
   const spyRecomputeRef = useRef(false);
   const spyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const updateActiveRef = useRef<(() => void) | null>(null);
- 
+
   const releaseSpy = useCallback(() => {
     spyLockRef.current = false;
     if (spyRecomputeRef.current) updateActiveRef.current?.();
   }, []);
- 
+
   const lockSpy = (recompute: boolean) => {
     spyLockRef.current = true;
     spyRecomputeRef.current = recompute;
     if (spyTimerRef.current) clearTimeout(spyTimerRef.current);
-    // fallback in case the click doesn't actually scroll anywhere
     spyTimerRef.current = setTimeout(releaseSpy, 250);
   };
- 
+
   useEffect(() => {
     const updateActive = () => {
       const links = headerData.links;
       if (!links || links.length === 0) return;
- 
+
       if (window.scrollY < 80) {
         const firstLink = links[0];
         if (firstLink) {
@@ -173,14 +164,14 @@ export default function Navbar({ data: customData }: NavbarProps) {
         }
         return;
       }
- 
+
       const isBottom =
         window.innerHeight + window.scrollY >=
         document.documentElement.scrollHeight - 60;
- 
+
       let currentActive = "";
       const offset = 140;
- 
+
       for (let i = 0; i < links.length; i++) {
         const link = links[i];
         const targetId = link.href.startsWith("#")
@@ -188,9 +179,9 @@ export default function Navbar({ data: customData }: NavbarProps) {
           : link.href === "/"
           ? "home"
           : "";
- 
+
         if (!targetId) continue;
- 
+
         const el = document.getElementById(targetId);
         if (el) {
           const rect = el.getBoundingClientRect();
@@ -199,40 +190,38 @@ export default function Navbar({ data: customData }: NavbarProps) {
           }
         }
       }
- 
+
       if (isBottom) {
         currentActive = links[links.length - 1].name;
       }
- 
+
       if (currentActive) {
         setActiveItem(currentActive);
       }
     };
     updateActiveRef.current = updateActive;
- 
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 15);
- 
+
       if (spyLockRef.current) {
-        // programmatic scroll in progress: stay locked until scrolling stops
         if (spyTimerRef.current) clearTimeout(spyTimerRef.current);
         spyTimerRef.current = setTimeout(releaseSpy, 150);
         return;
       }
- 
+
       updateActive();
     };
- 
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
- 
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       if (spyTimerRef.current) clearTimeout(spyTimerRef.current);
     };
   }, [headerData.links, releaseSpy]);
- 
-  // Slide the dark "active" pill to the current link
+
   const measureActive = useCallback(() => {
     const el = linkRefs.current[activeItem];
     if (!el) return;
@@ -241,7 +230,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
       prev && prev.left === next.left && prev.width === next.width ? prev : next
     );
   }, [activeItem]);
- 
+
   useEffect(() => {
     measureActive();
     const nav = navRef.current;
@@ -251,8 +240,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
     document.fonts?.ready.then(measureActive);
     return () => ro.disconnect();
   }, [measureActive]);
- 
-  // Mobile menu: Esc, click outside, and auto-close when the desktop nav shows
+
   useEffect(() => {
     if (!isMobileMenuOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -275,12 +263,12 @@ export default function Navbar({ data: customData }: NavbarProps) {
       window.removeEventListener("resize", onResize);
     };
   }, [isMobileMenuOpen]);
- 
+
   const showHover = (el: HTMLElement) =>
     setHoverPill({ left: el.offsetLeft, width: el.offsetWidth, visible: true });
   const hideHover = () =>
     setHoverPill((p) => (p ? { ...p, visible: false } : p));
- 
+
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string,
@@ -316,12 +304,11 @@ export default function Navbar({ data: customData }: NavbarProps) {
       window.history.pushState(null, "", "/");
     }
   };
- 
+
   const handleButtonClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
-    // the button isn't a nav link, so re-detect the active link once it lands
     if (href.startsWith("#")) lockSpy(true);
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
@@ -344,7 +331,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
       }
     }
   };
- 
+
   return (
     <header
       ref={headerRef}
@@ -358,9 +345,13 @@ export default function Navbar({ data: customData }: NavbarProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Link
-              href="#home"
+              href={headerData.links[0]?.href || "#home"}
               onClick={(e) =>
-                handleNavClick(e, "#home", headerData.links[0]?.name || "Home")
+                handleNavClick(
+                  e,
+                  headerData.links[0]?.href || "#home",
+                  headerData.links[0]?.name || "Home"
+                )
               }
               className="nv-logo nv-logo-in flex items-center active:scale-95 transition-transform duration-300"
             >
@@ -375,17 +366,16 @@ export default function Navbar({ data: customData }: NavbarProps) {
                 priority
               />
             </Link>
- 
+
             <div className="nv-divider hidden xl:block h-7 w-[1.5px] bg-[#d8b4e2]/70 mx-6 self-center" />
           </div>
- 
+
           <nav
             ref={navRef}
             onMouseLeave={hideHover}
             onBlur={hideHover}
             className="relative hidden xl:flex items-center space-x-1 lg:space-x-2"
           >
-            {/* soft hover pill that glides between links */}
             {hoverPill && (
               <span
                 aria-hidden
@@ -398,8 +388,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
                 }}
               />
             )}
- 
-            {/* dark active pill with an elastic slide */}
+
             {activePill && (
               <span
                 aria-hidden
@@ -407,7 +396,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
                 style={{ left: activePill.left, width: activePill.width }}
               />
             )}
- 
+
             {headerData.links.map((link, i) => {
               const isActive = activeItem === link.name;
               return (
@@ -438,7 +427,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
               );
             })}
           </nav>
- 
+
           <div
             className="nv-pop hidden xl:flex items-center"
             style={{ "--d": `${250 + headerData.links.length * 70}ms` } as React.CSSProperties}
@@ -452,7 +441,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
               className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-[14.5px] font-semibold text-white bg-[#3a004e] hover:bg-[#4f006b] shadow-[0_4px_14px_rgba(58,0,78,0.25)] hover:shadow-[0_8px_24px_rgba(58,0,78,0.4)] active:scale-95 transition-[background-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
             />
           </div>
- 
+
           <div className="nv-pop flex xl:hidden items-center space-x-3" style={{ "--d": "300ms" } as React.CSSProperties}>
             <CtaButton
               href={headerData.buttonHref}
@@ -460,12 +449,12 @@ export default function Navbar({ data: customData }: NavbarProps) {
               onClick={(e) => handleButtonClick(e, headerData.buttonHref)}
               className="inline-flex items-center justify-center px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-white bg-[#3a004e] hover:bg-[#4f006b] shadow-sm active:scale-95 transition-all duration-300"
             />
- 
+
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-lg text-[#3a004e] hover:bg-purple-100/60 active:scale-90 focus:outline-none transition-all duration-200"
-              aria-label="Toggle navigation menu"
+              aria-label={headerData.mobileMenuAriaLabel || "Toggle navigation menu"}
               aria-expanded={isMobileMenuOpen}
               aria-controls="nv-mobile-menu"
             >
@@ -494,8 +483,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
           </div>
         </div>
       </div>
- 
-      {/* mobile menu: smooth height + staggered items */}
+
       <div
         id="nv-mobile-menu"
         aria-hidden={!isMobileMenuOpen}
@@ -564,9 +552,8 @@ export default function Navbar({ data: customData }: NavbarProps) {
           </div>
         </div>
       </div>
- 
+
       <style jsx global>{`
-        /* ---------- entrance ---------- */
         .nv-header {
           animation: nv-drop 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
         }
@@ -580,7 +567,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
             transform: none;
           }
         }
- 
+
         .nv-logo-in {
           animation: nv-logo-in 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
         }
@@ -594,7 +581,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
             transform: none;
           }
         }
- 
+
         .nv-divider {
           transform-origin: center;
           animation: nv-divider 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s backwards;
@@ -609,7 +596,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
             opacity: 1;
           }
         }
- 
+
         .nv-rise {
           animation: nv-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms) backwards;
         }
@@ -625,7 +612,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
             filter: blur(0);
           }
         }
- 
+
         .nv-pop {
           animation: nv-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0ms) backwards;
         }
@@ -639,8 +626,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
             transform: none;
           }
         }
- 
-        /* ---------- logo micro-interaction ---------- */
+
         .nv-logo-img {
           transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
             height 0.5s ease;
@@ -648,8 +634,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
         .nv-logo:hover .nv-logo-img {
           transform: rotate(-4deg) scale(1.07);
         }
- 
-        /* ---------- nav pills ---------- */
+
         .nv-active-pill {
           animation: nv-pill-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
           transition: left 0.6s cubic-bezier(0.34, 1.35, 0.64, 1),
@@ -670,8 +655,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
             width 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease,
             transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
- 
-        /* text roll on hover */
+
         .nv-roll-a,
         .nv-roll-b {
           transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
@@ -685,8 +669,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
         .nv-link[data-active="false"]:hover .nv-roll-b {
           transform: translateY(0);
         }
- 
-        /* ---------- CTA button ---------- */
+
         .nv-cta {
           transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
             background-color 0.3s ease, box-shadow 0.3s ease;
@@ -749,8 +732,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
             transform: scale(2.6);
           }
         }
- 
-        /* ---------- accessibility ---------- */
+
         @media (prefers-reduced-motion: reduce) {
           .nv-header,
           .nv-logo-in,
@@ -781,4 +763,3 @@ export default function Navbar({ data: customData }: NavbarProps) {
     </header>
   );
 }
- 

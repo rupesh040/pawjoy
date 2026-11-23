@@ -1,26 +1,17 @@
 "use client";
- 
+
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import contentData from "@/data/content.json";
 import { WhyChooseUsData } from "@/data/type";
- 
+
 interface WhyChooseUsProps {
   data?: WhyChooseUsData;
 }
- 
+
 type StatType = WhyChooseUsData["achievements"]["stats"][number];
- 
-/*
- * Glitch-proofing notes
- * - Entrance animations, hover, tilt and parallax each live on their own layer or use
- *   independent CSS properties (scale / rotate / translate), so no transform is ever overwritten.
- * - Pointer tracking is read from a stationary wrapper, never from the tilted card itself.
- * - Counters render an invisible copy of the final number to reserve its width (no layout shift).
- * - Highlights use a colour wave, not background-clip: text.
- */
+
 const WC_CSS = `
-/* ---------- shared keyframes ---------- */
 @keyframes wc-line { from { opacity: 0; transform: scaleX(0); } }
 @keyframes wc-ch { from { opacity: 0; transform: translateY(0.6em) rotate(8deg) scale(0.7); filter: blur(6px); } }
 @keyframes wc-cd { from { opacity: 0; transform: translateY(-0.7em) rotate(-8deg) scale(1.5); filter: blur(8px); } }
@@ -42,8 +33,7 @@ const WC_CSS = `
   84% { transform: rotate(14deg) scale(1.12); }
   92% { transform: rotate(-7deg); }
 }
- 
-/* ---------- hero photo: curtain wipe, settle, slow drift, scroll parallax ---------- */
+
 .wc-img:not(.wc-in) { opacity: 0; }
 @keyframes wc-img-in { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
 .wc-img.wc-in { animation: wc-img-in 1.3s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
@@ -67,14 +57,13 @@ const WC_CSS = `
   20% { opacity: 1; }
   100% { left: 120%; opacity: 0; }
 }
- 
-/* ---------- reveal gating for text blocks ---------- */
+
 .wc-hd:not(.wc-in) .wc-hx, .wc-st:not(.wc-in) .wc-hx { opacity: 0; }
- 
+
 .wc-ll { transform-origin: right center; }
 .wc-lr { transform-origin: left center; }
 .wc-in .wc-ll, .wc-in .wc-lr { animation: wc-line 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0.1s) backwards; }
- 
+
 .wc-ch, .wc-cd { display: inline-block; }
 .wc-in .wc-ch { animation: wc-ch 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) backwards; }
 .wc-in .wc-cd { animation: wc-cd 1s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) backwards; }
@@ -84,19 +73,17 @@ const WC_CSS = `
 .wc-in .wc-hw { animation: wc-hw 0.95s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) backwards; }
 .wc-bw { display: inline-block; }
 .wc-in .wc-bw { animation: wc-bw 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) backwards; }
- 
+
 .wc-underline path { stroke-dasharray: 1; stroke-dashoffset: 1; }
 .wc-in .wc-underline path { animation: wc-draw 1.2s cubic-bezier(0.65, 0, 0.35, 1) var(--d, 1s) forwards; }
 .wc-spark { opacity: 0; transform-origin: center; }
 .wc-in .wc-spark { animation: wc-spark 2.6s ease-in-out var(--d, 1.6s) infinite; }
- 
-/* ---------- stats ---------- */
+
 @keyframes wc-stat { from { opacity: 0; transform: translateY(26px); } }
 .wc-in .wc-stat { animation: wc-stat 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) backwards; }
 @keyframes wc-div { from { opacity: 0; transform: scaleY(0); } }
 .wc-in .wc-div { animation: wc-div 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) backwards; }
- 
-/* tile: spring pop + idle float use independent properties, hover uses transform */
+
 @keyframes wc-tile-pop { from { opacity: 0; scale: 0; rotate: -90deg; } }
 @keyframes wc-bob { from { translate: 0 0; } to { translate: 0 -3px; } }
 .wc-in .wc-tile {
@@ -115,8 +102,7 @@ const WC_CSS = `
 }
 .wc-stat .wc-val { transition: color 0.3s ease; }
 .wc-stat:hover .wc-val { color: #8B1EB7; }
- 
-/* per-icon micro-animations on hover */
+
 @keyframes wc-pulse { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.22); } }
 @keyframes wc-swing { 0%, 100% { transform: rotate(0deg); } 30% { transform: rotate(-12deg); } 65% { transform: rotate(9deg); } }
 .wc-paw-i { transform-origin: 50% 70%; }
@@ -126,8 +112,7 @@ const WC_CSS = `
 .wc-stat:hover .wc-award-i { animation: wc-swing 0.9s ease-in-out; }
 .wc-cal-check { stroke-dasharray: 1; stroke-dashoffset: 0; }
 .wc-stat:hover .wc-cal-check { animation: wc-redraw 0.6s ease; }
- 
-/* ---------- card ---------- */
+
 .wc-cwrap:not(.wc-in) { opacity: 0; }
 @keyframes wc-card-in { from { opacity: 0; transform: translate3d(0, 90px, 0) scale(0.95); } }
 .wc-cwrap.wc-in { animation: wc-card-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards; }
@@ -144,12 +129,11 @@ const WC_CSS = `
   pointer-events: none;
 }
 .wc-cwrap:hover .wc-cspot { opacity: 1; }
- 
+
 @keyframes wc-pawpop { from { scale: 0; rotate: -160deg; opacity: 0; } }
 .wc-in .wc-pawc { animation: wc-pawpop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s backwards; }
 .wc-wiggle { transform-origin: 50% 70%; animation: wc-wiggle 4.5s ease-in-out 2.4s infinite; }
- 
-/* features: slide in, check draws itself, hover re-draws it */
+
 @keyframes wc-feat { from { opacity: 0; transform: translateX(-24px); } }
 .wc-in .wc-feat { animation: wc-feat 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) backwards; }
 .wc-feat { transition: background-color 0.3s ease; }
@@ -162,7 +146,7 @@ const WC_CSS = `
 .wc-feat:hover .wc-fcheck path { animation: wc-redraw 0.5s ease; }
 .wc-ftext { transition: color 0.3s ease; }
 .wc-feat:hover .wc-ftext { color: #8B1EB7; }
- 
+
 @media (prefers-reduced-motion: reduce) {
   .wc-img.wc-in, .wc-in .wc-media, .wc-in .wc-sweep, .wc-in .wc-ll, .wc-in .wc-lr,
   .wc-in .wc-ch, .wc-in .wc-cd, .wc-in .wc-wv, .wc-in .wc-hw, .wc-in .wc-bw,
@@ -176,7 +160,7 @@ const WC_CSS = `
   .wc-card, .wc-tile, .wc-fcirc { transition: none !important; }
 }
 `;
- 
+
 function PawSvg({
   fill = "#8B1EB7",
   className = "",
@@ -204,7 +188,7 @@ function PawSvg({
     </svg>
   );
 }
- 
+
 function SparkleSvg({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <svg viewBox="0 0 24 24" className={className} style={style} fill="#C77DEB" aria-hidden>
@@ -212,7 +196,7 @@ function SparkleSvg({ className = "", style }: { className?: string; style?: Rea
     </svg>
   );
 }
- 
+
 function UsersIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -231,7 +215,7 @@ function UsersIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
+
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -251,7 +235,7 @@ function CalendarIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
+
 function AwardIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -268,7 +252,7 @@ function AwardIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
+
 function CheckIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -284,12 +268,11 @@ function CheckIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
-/** Fires once when the element scrolls into view. */
+
 function useInView<T extends HTMLElement>(threshold = 0.2, rootMargin = "0px 0px -8% 0px") {
   const ref = useRef<T>(null);
   const [inView, setInView] = useState(false);
- 
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -305,14 +288,10 @@ function useInView<T extends HTMLElement>(threshold = 0.2, rootMargin = "0px 0px
     io.observe(el);
     return () => io.disconnect();
   }, [threshold, rootMargin]);
- 
+
   return [ref, inView] as const;
 }
- 
-/**
- * Counts up to the value ("5,000+", "99%", "10+") once active.
- * An invisible copy of the final text reserves the width, so nothing shifts while counting.
- */
+
 function CountUp({ value, active, delay = 0.5 }: { value: string; active: boolean; delay?: number }) {
   const m = value.match(/^(\D*)(\d[\d,]*(?:\.\d+)?)(.*)$/);
   const prefix = m ? m[1] : "";
@@ -321,9 +300,9 @@ function CountUp({ value, active, delay = 0.5 }: { value: string; active: boolea
   const target = parseFloat(numStr.replace(/,/g, ""));
   const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
   const useComma = numStr.includes(",");
- 
+
   const [n, setN] = useState(0);
- 
+
   useEffect(() => {
     if (!m || !active) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -346,16 +325,15 @@ function CountUp({ value, active, delay = 0.5 }: { value: string; active: boolea
       clearTimeout(timer);
       cancelAnimationFrame(raf);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, target, delay]);
- 
+
   if (!m) return <>{value}</>;
- 
+
   const fmt = (x: number) =>
     useComma
       ? x.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
       : x.toFixed(decimals);
- 
+
   return (
     <span className="relative inline-block tabular-nums" aria-label={value}>
       <span aria-hidden className="invisible whitespace-nowrap">
@@ -369,11 +347,10 @@ function CountUp({ value, active, delay = 0.5 }: { value: string; active: boolea
     </span>
   );
 }
- 
+
 const words = (text: string) => text.trim().split(/\s+/).filter(Boolean);
 const d = (s: number) => ({ "--d": `${s}s` } as React.CSSProperties);
- 
-/** letters (words stay unbroken): kind "ch" rises, "cd" drops in; wave adds the travelling colour light */
+
 function renderChars(text: string, kind: "ch" | "cd", base: number, step: number, wave = false) {
   const ws = words(text);
   let ci = 0;
@@ -402,8 +379,7 @@ function renderChars(text: string, kind: "ch" | "cd", base: number, step: number
     </React.Fragment>
   ));
 }
- 
-/** words rise through a mask (no clipping of descenders) */
+
 function renderMaskWords(text: string, base: number, step: number) {
   return words(text).map((w, i) => (
     <React.Fragment key={i}>
@@ -415,8 +391,7 @@ function renderMaskWords(text: string, base: number, step: number) {
     </React.Fragment>
   ));
 }
- 
-/** words blur in one after another */
+
 function renderBlurWords(text: string, base: number, step: number) {
   const ws = words(text);
   return ws.map((w, i) => (
@@ -428,7 +403,7 @@ function renderBlurWords(text: string, base: number, step: number) {
     </React.Fragment>
   ));
 }
- 
+
 function StatIcon({ icon }: { icon: StatType["icon"] }) {
   return (
     <>
@@ -451,26 +426,25 @@ function StatIcon({ icon }: { icon: StatType["icon"] }) {
     </>
   );
 }
- 
+
 export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
   const sectionData =
     customData ||
     (contentData.PawJoy.sections.WhyChooseUs.variants.PawJoyWhyChooseUs1 as WhyChooseUsData);
- 
+
   const { achievements, card } = sectionData;
- 
+
   const [secRef] = useInView<HTMLElement>(0.05, "0px");
   const [imgRef, imgIn] = useInView<HTMLDivElement>(0.1, "0px");
   const [hdRef, hdIn] = useInView<HTMLDivElement>(0.3);
   const [stRef, stIn] = useInView<HTMLDivElement>(0.3);
   const [cardRef, cardIn] = useInView<HTMLDivElement>(0.15, "0px 0px -6% 0px");
- 
-  // scroll-linked parallax for the hero photo: writes --p (-1..1) on the section
+
   useEffect(() => {
     const el = secRef.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
- 
+
     let raf = 0;
     const update = () => {
       raf = 0;
@@ -483,7 +457,7 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
- 
+
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
@@ -493,8 +467,7 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
       if (raf) cancelAnimationFrame(raf);
     };
   }, [secRef]);
- 
-  // pointer variables are written on the stationary wrapper, never on the tilted card
+
   const onCardMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== "mouse") return;
     const el = e.currentTarget;
@@ -506,7 +479,7 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
     el.style.setProperty("--sx", `${x * 100}%`);
     el.style.setProperty("--sy", `${y * 100}%`);
   };
- 
+
   const onCardLeave = (e: React.PointerEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
     el.style.setProperty("--rx", "0");
@@ -514,26 +487,24 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
     el.style.setProperty("--sx", "50%");
     el.style.setProperty("--sy", "50%");
   };
- 
-  // card heading timing
+
   const headPart1Words = words(card.headingPart1).length;
   const headPrefixWords = words(card.headingPart2Prefix).length;
   const highlightChars = Array.from(card.headingHighlight.trim());
   const hlStart = 0.55 + (headPart1Words + headPrefixWords) * 0.09 + 0.05;
   const underlineDelay = hlStart + highlightChars.length * 0.04 + 0.35;
   const featBase = underlineDelay + 0.5;
- 
+
   const statCount = achievements.stats.length;
- 
+
   return (
     <section
       ref={secRef}
-      id="why-choose-us"
+      id={sectionData.id || "why-choose-us"}
       className="relative w-full bg-white pb-12 sm:pb-14 lg:pb-16 overflow-hidden"
     >
       <style dangerouslySetInnerHTML={{ __html: WC_CSS }} />
- 
-      {/* full-width photo */}
+
       <div
         ref={imgRef}
         className={`wc-img relative w-full h-[300px] sm:h-[400px] lg:h-[460px] xl:h-[480px] overflow-hidden bg-purple-50 ${
@@ -555,10 +526,9 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
         <div className="wc-sweep" />
       </div>
- 
+
       <div className="relative max-w-[1500px] mx-auto px-4 sm:px-8 lg:px-[4.8%]">
         <div className="relative z-20 grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-8 lg:gap-7 items-start -mt-6 sm:-mt-10 lg:-mt-[147px]">
-          {/* ---------- left: achievements ---------- */}
           <div className="flex flex-col items-stretch pt-12 sm:pt-14 lg:pt-[222px] lg:pr-4">
             <div ref={hdRef} className={`wc-hd flex flex-col items-center text-center ${hdIn ? "wc-in" : ""}`}>
               <div className="flex items-center justify-center gap-4 sm:gap-5 mb-3">
@@ -572,12 +542,12 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
                 </h2>
                 <span className="wc-hx wc-lr w-10 sm:w-[58px] h-[2px] bg-[#8B1EB7] rounded-full" />
               </div>
- 
+
               <p className="text-[#4A2E5B] text-sm sm:text-base lg:text-[16.5px] font-medium leading-relaxed text-center max-w-[540px] mx-auto mb-8 sm:mb-9">
                 {renderBlurWords(achievements.description, 0.7, 0.03)}
               </p>
             </div>
- 
+
             <div
               ref={stRef}
               className={`wc-st grid grid-cols-2 gap-x-4 gap-y-8 sm:flex sm:items-center sm:justify-between sm:gap-1 w-full max-w-[720px] mx-auto ${
@@ -587,7 +557,7 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
               {achievements.stats.map((stat, idx) => {
                 const isLast = idx === statCount - 1;
                 const base = 0.15 + idx * 0.14;
- 
+
                 return (
                   <React.Fragment key={idx}>
                     <div
@@ -597,16 +567,16 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
                       <div className="wc-tile w-[54px] h-[54px] rounded-[14px] bg-[#F2E6FA] text-[#6B0F96] flex items-center justify-center mb-2.5">
                         <StatIcon icon={stat.icon} />
                       </div>
- 
+
                       <div className="wc-val text-[26px] sm:text-[28px] lg:text-[30px] font-extrabold text-[#2E004F] tracking-tight leading-tight">
                         <CountUp value={stat.value} active={stIn} delay={base + 0.35} />
                       </div>
- 
+
                       <div className="text-[13px] sm:text-[14px] lg:text-[16.5px] font-medium text-[#3D2A4A] tracking-normal mt-1">
                         {stat.label}
                       </div>
                     </div>
- 
+
                     {!isLast && (
                       <div
                         className="wc-hx wc-div hidden sm:block h-16 w-[1.5px] bg-[#E3D3F0] mx-1 self-center origin-center"
@@ -618,8 +588,7 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
               })}
             </div>
           </div>
- 
-          {/* ---------- right: why choose us card ---------- */}
+
           <div>
             <div
               ref={cardRef}
@@ -629,9 +598,8 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
             >
               <div className="wc-card relative overflow-hidden bg-white rounded-[32px] sm:rounded-[40px] px-6 sm:px-8 pt-10 pb-10 lg:pt-[84px] lg:pb-[88px] shadow-[0_20px_60px_rgba(58,0,78,0.12)] border border-purple-100/70">
                 <div className="wc-cspot absolute inset-0" />
- 
+
                 <div className="relative z-10">
-                  {/* tagline */}
                   <div className="flex items-center gap-3 mb-4 sm:mb-5">
                     <span className="wc-pawc inline-flex">
                       <PawSvg size={28} fill="#5B0F82" className="wc-wiggle" />
@@ -644,8 +612,7 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
                     </span>
                     <span className="wc-lr h-[2px] w-20 sm:w-[110px] bg-[#8B1EB7] rounded-full ml-1" style={d(0.9)} />
                   </div>
- 
-                  {/* heading */}
+
                   <h2
                     className="text-[26px] sm:text-[32px] lg:text-[36px] xl:text-[38px] font-extrabold text-[#2E004F] tracking-tight leading-[1.2] mb-3 sm:mb-4"
                     style={{ "--wb": "#8B1EB7", "--wp": "#d58cff" } as React.CSSProperties}
@@ -673,7 +640,7 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
                             </span>
                           )
                         )}
- 
+
                         <svg
                           viewBox="0 0 300 14"
                           preserveAspectRatio="none"
@@ -691,7 +658,7 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
                             vectorEffect="non-scaling-stroke"
                           />
                         </svg>
- 
+
                         <SparkleSvg
                           className="wc-spark pointer-events-none absolute -top-1 -right-3 sm:-top-2 sm:-right-5 h-4 w-4 sm:h-6 sm:w-6"
                           style={d(underlineDelay + 0.2)}
@@ -699,11 +666,11 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
                       </span>
                     </span>
                   </h2>
- 
+
                   <p className="text-[15px] sm:text-[16.5px] lg:text-[17px] xl:text-[18px] text-[#45344F] font-medium leading-[1.55] mb-7 sm:mb-8">
                     {renderBlurWords(card.description, 0.95, 0.025)}
                   </p>
- 
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 sm:gap-y-4">
                     {card.features.map((feat, i) => (
                       <div
@@ -729,4 +696,3 @@ export default function WhyChooseUs({ data: customData }: WhyChooseUsProps) {
     </section>
   );
 }
- 

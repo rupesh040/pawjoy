@@ -1,18 +1,18 @@
 "use client";
- 
+
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import contentData from "@/data/content.json";
 import { HeroData } from "@/data/type";
- 
+
 interface HeroProps {
   data?: HeroData;
 }
- 
+
 const NOTCH_MASK =
   "radial-gradient(ellipse 30px 50px at 0 50%, transparent 98%, #000 100%) left / 50% 100% no-repeat, radial-gradient(ellipse 30px 50px at 100% 50%, transparent 98%, #000 100%) right / 50% 100% no-repeat";
- 
+
 const HERO_CSS = `
 @keyframes hx-fade-up {
   from { opacity: 0; transform: translateY(26px); }
@@ -38,7 +38,7 @@ const HERO_CSS = `
 @keyframes hx-dot {
   from { opacity: 0; transform: scale(0.3); }
 }
- 
+
 .hx-fade-up { animation: hx-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
 .hx-fade { animation: hx-fade 0.6s ease-out backwards; }
 .hx-strip { animation: hx-fade 0.7s ease-out 0.5s backwards; }
@@ -48,8 +48,7 @@ const HERO_CSS = `
 .hx-img { animation: hx-img-settle 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.55s backwards; }
 .hx-pop { animation: hx-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
 .hx-dot { animation: hx-dot 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
- 
-/* ---------- heading: split letters ---------- */
+
 .hx-char {
   display: inline-block;
   transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -66,8 +65,7 @@ const HERO_CSS = `
 }
 .hx-c1 { animation: hx-char-up 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) backwards; }
 .hx-c2 { animation: hx-char-drop 1s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) backwards; }
- 
-/* light that travels letter by letter across the purple line */
+
 .hx-wave {
   display: inline-block;
   animation: hx-wave 3.6s ease-in-out var(--wd, 3s) infinite;
@@ -76,8 +74,7 @@ const HERO_CSS = `
   0%, 60%, 100% { color: #9214B7; text-shadow: 0 0 0 rgba(217, 131, 255, 0); }
   30% { color: #d983ff; text-shadow: 0 0 22px rgba(217, 131, 255, 0.55); }
 }
- 
-/* hand-drawn underline */
+
 .hx-underline path {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
@@ -86,8 +83,7 @@ const HERO_CSS = `
 @keyframes hx-draw {
   to { stroke-dashoffset: 0; }
 }
- 
-/* twinkling sparkles */
+
 .hx-spark {
   transform-origin: center;
   animation: hx-spark 2.6s ease-in-out var(--d, 1.6s) infinite;
@@ -97,8 +93,7 @@ const HERO_CSS = `
   0%, 100% { transform: scale(0.2) rotate(0deg); opacity: 0; }
   50% { transform: scale(1) rotate(90deg); opacity: 1; }
 }
- 
-/* sparkle rays beside the heading */
+
 .hx-ray {
   animation:
     hx-fade 0.6s ease-out var(--d, 0.5s) backwards,
@@ -108,8 +103,7 @@ const HERO_CSS = `
   0%, 100% { scale: 1; opacity: 1; }
   50% { scale: 1.3 1.45; opacity: 0.7; }
 }
- 
-/* ---------- description: blur-in words ---------- */
+
 .hx-word {
   display: inline-block;
   animation: hx-word 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) backwards;
@@ -122,8 +116,7 @@ const HERO_CSS = `
 @keyframes hx-word {
   from { opacity: 0; filter: blur(8px); transform: translateY(12px); }
 }
- 
-/* ---------- badge: typewriter caret, sheen, wiggle ---------- */
+
 .hx-caret {
   display: inline-block;
   width: 2px;
@@ -166,8 +159,7 @@ const HERO_CSS = `
   84% { transform: rotate(14deg) scale(1.12); }
   92% { transform: rotate(-7deg); }
 }
- 
-/* ---------- cursor-driven depth ---------- */
+
 .hx-par {
   transform: translate3d(calc(var(--mx, 0) * var(--k, 0) * 1px), calc(var(--my, 0) * var(--k, 0) * 1px), 0);
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
@@ -189,8 +181,7 @@ const HERO_CSS = `
   from { scale: 0; opacity: 0; }
 }
 .hx-paw-in { animation: hx-paw-in 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0.5s) backwards; }
- 
-/* ---------- cards: slow ken burns + hover sheen ---------- */
+
 .hx-kb { animation: hx-kb 16s ease-in-out infinite alternate; }
 .hx-kb-r { animation-direction: alternate-reverse; }
 @keyframes hx-kb {
@@ -216,8 +207,7 @@ const HERO_CSS = `
   from { left: -60%; }
   to { left: 140%; }
 }
- 
-/* ---------- misc micro-interactions ---------- */
+
 .hx-nudge { animation: hx-nudge 1.6s ease-in-out infinite; }
 @keyframes hx-nudge {
   0%, 100% { transform: translateX(0); }
@@ -228,13 +218,13 @@ const HERO_CSS = `
   from { opacity: 0.5; transform: scale(1); }
   to { opacity: 0; transform: scale(2.4); }
 }
- 
+
 @media (max-width: 767px) {
   .hx-card-left, .hx-card-right, .hx-card-center {
     animation-name: hx-card-rise;
   }
 }
- 
+
 @media (prefers-reduced-motion: reduce) {
   .hx-fade-up, .hx-fade, .hx-strip, .hx-card-left, .hx-card-center,
   .hx-card-right, .hx-img, .hx-pop, .hx-dot, .hx-c1, .hx-c2, .hx-wave,
@@ -248,7 +238,7 @@ const HERO_CSS = `
   .hx-par, .hx-char, .hx-word { transition: none !important; }
 }
 `;
- 
+
 function PawSvg({
   fill = "#DFCCF0",
   className = "",
@@ -277,7 +267,7 @@ function PawSvg({
     </svg>
   );
 }
- 
+
 function SparkleSvg({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <svg viewBox="0 0 24 24" className={className} style={style} fill="#C77DEB" aria-hidden>
@@ -285,7 +275,7 @@ function SparkleSvg({ className = "", style }: { className?: string; style?: Rea
     </svg>
   );
 }
- 
+
 function StethoscopeIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -303,7 +293,7 @@ function StethoscopeIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
+
 function HomeIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -320,7 +310,7 @@ function HomeIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
+
 function ChevronRightIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -336,11 +326,10 @@ function ChevronRightIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
-/** Types the text out one character at a time (full text shown instantly if motion is reduced). */
+
 function useTypewriter(text: string, startDelay = 600, speed = 40) {
   const [count, setCount] = useState(0);
- 
+
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setCount(text.length);
@@ -360,25 +349,24 @@ function useTypewriter(text: string, startDelay = 600, speed = 40) {
       if (interval) clearInterval(interval);
     };
   }, [text, startDelay, speed]);
- 
+
   return count;
 }
- 
+
 export default function Hero({ data: customData }: HeroProps) {
   const heroData =
     customData ||
     (contentData.PawJoy.sections.Hero.variants.PawJoyHero1 as HeroData);
- 
+
   const [activeSlide, setActiveSlide] = useState<number>(
     heroData.pagination.activeDotIndex
   );
- 
+
   const lastIndex = heroData.cards.length - 1;
- 
+
   const badgeText = heroData.badge.text;
   const typed = useTypewriter(badgeText);
- 
-  // cursor-driven depth + soft glow that trails the mouse
+
   const onHeroMove = (e: React.PointerEvent<HTMLElement>) => {
     if (e.pointerType !== "mouse") return;
     const el = e.currentTarget;
@@ -391,15 +379,14 @@ export default function Hero({ data: customData }: HeroProps) {
     el.style.setProperty("--gy", `${py}px`);
     el.style.setProperty("--go", "1");
   };
- 
+
   const onHeroLeave = (e: React.PointerEvent<HTMLElement>) => {
     const el = e.currentTarget;
     el.style.setProperty("--mx", "0");
     el.style.setProperty("--my", "0");
     el.style.setProperty("--go", "0");
   };
- 
-  // split a string into per-letter spans (words stay unbroken)
+
   const renderChars = (
     text: string,
     kind: 1 | 2,
@@ -438,22 +425,22 @@ export default function Hero({ data: customData }: HeroProps) {
       </React.Fragment>
     ));
   };
- 
+
   const part2Len = heroData.headingPart2.replace(/\s+/g, "").length;
   const underlineDelay = 0.4 + part2Len * 0.045 + 0.35;
- 
+
   return (
     <section
-      id="home"
+      id={heroData.id || "home"}
       onPointerMove={onHeroMove}
       onPointerLeave={onHeroLeave}
       className="relative w-full overflow-hidden bg-[#FCF8FF] pt-5 sm:pt-7 lg:pt-6 pb-10 sm:pb-12 lg:pb-12"
     >
       <style dangerouslySetInnerHTML={{ __html: HERO_CSS }} />
- 
+
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="hx-glow" />
- 
+
         <div
           style={{ "--k": -22 } as React.CSSProperties}
           className="hx-par absolute -top-40 -left-36 w-[400px] h-[400px] rounded-full bg-[#EBD9F8]/40 blur-3xl"
@@ -462,7 +449,7 @@ export default function Hero({ data: customData }: HeroProps) {
           style={{ "--k": 26 } as React.CSSProperties}
           className="hx-par absolute -bottom-40 -right-32 w-[450px] h-[450px] rounded-full bg-[#EBD9F8]/50 blur-3xl"
         />
- 
+
         <div
           style={{ "--k": 14 } as React.CSSProperties}
           className="hx-par absolute -left-32 top-[25%] w-[250px] h-[390px] rounded-r-full bg-[#F0E3FA]/65"
@@ -475,7 +462,7 @@ export default function Hero({ data: customData }: HeroProps) {
           style={{ "--k": 10 } as React.CSSProperties}
           className="hx-par absolute -top-32 -right-20 w-52 h-52 rounded-full bg-[#EBD9F8]/35"
         />
- 
+
         {heroData.backgroundPaws.map((paw, idx) => (
           <div
             key={idx}
@@ -490,7 +477,6 @@ export default function Hero({ data: customData }: HeroProps) {
             } as React.CSSProperties}
             className="hx-paw-in absolute pointer-events-none select-none z-0"
           >
-            {/* depth layer: each paw shifts a different amount with the cursor */}
             <div
               className="hx-par"
               style={{ "--k": (idx % 3 + 1) * 9 * (idx % 2 ? -1 : 1) } as React.CSSProperties}
@@ -506,12 +492,11 @@ export default function Hero({ data: customData }: HeroProps) {
           </div>
         ))}
       </div>
- 
+
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
         <div className="hx-fade-up mb-5 sm:mb-6">
           <div className="relative overflow-hidden inline-flex items-center gap-2 px-5 sm:px-6 py-2 rounded-full bg-[#EEDDF7] border border-[#E5D1F0] shadow-[0_3px_12px_rgba(58,0,78,0.05)] transition-all duration-300 hover:scale-105">
             <PawSvg size={19} fill="#45005B" className="hx-wiggle w-5 h-5" />
-            {/* typewriter: full text reserves the width, typed text overlays it */}
             <span
               aria-label={badgeText}
               className="relative inline-block text-[#39004D] text-sm sm:text-base font-bold tracking-tight"
@@ -529,7 +514,7 @@ export default function Hero({ data: customData }: HeroProps) {
             <span className="hx-bsheen pointer-events-none" />
           </div>
         </div>
- 
+
         <div className="text-center max-w-5xl mx-auto mb-6 sm:mb-8 lg:mb-9">
           <div className="relative inline-block">
             <div className="hidden sm:block absolute -top-10 -left-[76px] animate-pulse-subtle pointer-events-none">
@@ -548,24 +533,22 @@ export default function Hero({ data: customData }: HeroProps) {
                 />
               </div>
             </div>
- 
+
             <h1 className="text-[35px] sm:text-[52px] md:text-[62px] lg:text-[68px] xl:text-[72px] font-extrabold text-[#350047] tracking-[-0.035em] leading-[1.08] cursor-default">
-              {/* line 1: letters rise in with a spring, jelly on hover */}
               <span className="block">
                 <span className="sr-only">{heroData.headingPart1}</span>
                 <span aria-hidden="true">
                   {renderChars(heroData.headingPart1, 1, 0.1, 0.03)}
                 </span>
               </span>
- 
-              {/* line 2: letters drop in, a light wave runs through them, then a hand-drawn underline */}
+
               <span className="block italic font-extrabold text-[#9214B7] tracking-[-0.025em] mt-1">
                 <span className="relative inline-block">
                   <span className="sr-only">{heroData.headingPart2}</span>
                   <span aria-hidden="true">
                     {renderChars(heroData.headingPart2, 2, 0.4, 0.045, true)}
                   </span>
- 
+
                   <svg
                     viewBox="0 0 300 14"
                     preserveAspectRatio="none"
@@ -583,7 +566,7 @@ export default function Hero({ data: customData }: HeroProps) {
                       vectorEffect="non-scaling-stroke"
                     />
                   </svg>
- 
+
                   <SparkleSvg
                     className="hx-spark pointer-events-none absolute -top-1 -right-4 sm:-top-3 sm:-right-9 h-4 w-4 sm:h-7 sm:w-7"
                     style={{ "--d": `${underlineDelay + 0.2}s` } as React.CSSProperties}
@@ -597,8 +580,7 @@ export default function Hero({ data: customData }: HeroProps) {
             </h1>
           </div>
         </div>
- 
-        {/* description: words blur in one by one */}
+
         <div className="text-center max-w-[700px] mx-auto mb-8 sm:mb-10">
           {heroData.descriptionLines.map((line, idx) => (
             <p
@@ -625,7 +607,7 @@ export default function Hero({ data: customData }: HeroProps) {
             </p>
           ))}
         </div>
- 
+
         <div className="hx-strip w-full max-w-[1250px] mx-auto mb-6 sm:mb-7 md:drop-shadow-[0_8px_18px_rgba(65,0,85,0.09)]">
           <div
             style={{ "--notch-mask": NOTCH_MASK } as React.CSSProperties}
@@ -639,7 +621,7 @@ export default function Hero({ data: customData }: HeroProps) {
                 : isLast
                 ? "hx-card-right"
                 : "hx-card-center";
- 
+
               return (
                 <div
                   key={card.id}
@@ -648,7 +630,6 @@ export default function Hero({ data: customData }: HeroProps) {
                   } ${isLast ? "md:-mr-9 md:rounded-r-none" : ""}`}
                 >
                   <div className="absolute inset-0 md:-inset-x-10 md:skew-x-[9deg]">
-                    {/* cursor parallax > slow ken burns > photo */}
                     <div
                       className="hx-par absolute inset-0"
                       style={{ "--k": index % 2 ? 7 : -7 } as React.CSSProperties}
@@ -670,7 +651,7 @@ export default function Hero({ data: customData }: HeroProps) {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-black/5 opacity-60" />
                     <div className="hx-card-sheen" />
                   </div>
- 
+
                   {((card.badges && card.badges.length > 0) ||
                     card.floatingAction) && (
                     <div className="pointer-events-none absolute inset-0 z-20 md:skew-x-[9deg]">
@@ -678,7 +659,7 @@ export default function Hero({ data: customData }: HeroProps) {
                         <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2 sm:left-4 sm:top-4 md:left-[44px] xl:gap-[22px]">
                           {card.badges.map((b, bIdx) => {
                             const isDark = b.style === "dark";
- 
+
                             return (
                               <div
                                 key={bIdx}
@@ -696,11 +677,11 @@ export default function Hero({ data: customData }: HeroProps) {
                                     className="hx-wiggle h-4 w-4 lg:h-5 lg:w-5"
                                   />
                                 )}
- 
+
                                 {b.icon === "stethoscope" && (
                                   <StethoscopeIcon className="h-4 w-4 text-white lg:h-5 lg:w-5" />
                                 )}
- 
+
                                 <span>{b.text}</span>
                                 <span
                                   className="hx-bsheen pointer-events-none"
@@ -711,7 +692,7 @@ export default function Hero({ data: customData }: HeroProps) {
                           })}
                         </div>
                       )}
- 
+
                       {card.floatingAction && (
                         <div
                           style={{ animationDelay: "1.4s" }}
@@ -722,11 +703,11 @@ export default function Hero({ data: customData }: HeroProps) {
                             className="group/cta pointer-events-auto inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-bold text-[#44005B] shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_22px_rgba(0,0,0,0.2)] active:scale-95 sm:px-5 sm:py-3 sm:text-sm lg:gap-3 lg:px-7 lg:py-[17px] lg:text-[17px]"
                           >
                             <HomeIcon className="h-[18px] w-[18px] text-[#5B0078] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/cta:-rotate-12 group-hover/cta:scale-110 lg:h-[26px] lg:w-[26px]" />
- 
+
                             <span className="whitespace-nowrap">
                               {card.floatingAction.text}
                             </span>
- 
+
                             <ChevronRightIcon className="hx-nudge h-4 w-4 text-[#5B0078] lg:h-[18px] lg:w-[18px]" />
                           </Link>
                         </div>
@@ -738,19 +719,19 @@ export default function Hero({ data: customData }: HeroProps) {
             })}
           </div>
         </div>
- 
+
         <div className="flex items-center justify-center gap-3 pt-1">
           {Array.from({
             length: heroData.pagination.totalDots,
           }).map((_, idx) => {
             const isActive = activeSlide === idx;
- 
+
             return (
               <button
                 key={idx}
                 type="button"
                 onClick={() => setActiveSlide(idx)}
-                aria-label={`Slide ${idx + 1}`}
+                aria-label={heroData.cards[idx]?.alt || `Slide ${idx + 1}`}
                 aria-current={isActive ? "true" : undefined}
                 style={{ animationDelay: `${1.5 + idx * 0.1}s` }}
                 className={`hx-dot relative rounded-full transition-all duration-300 ${
@@ -773,4 +754,3 @@ export default function Hero({ data: customData }: HeroProps) {
     </section>
   );
 }
- 

@@ -154,13 +154,15 @@
               }
             ],
             "button": "Contact Us",
-            "buttonHref": "#contact"
+            "buttonHref": "#contact",
+            "mobileMenuAriaLabel": "Toggle navigation menu"
           }
         }
       },
       "Hero": {
         "variants": {
           "PawJoyHero1": {
+            "id": "home",
             "badge": {
               "text": "Professional Pet Care Services",
               "icon": "paw"
@@ -276,6 +278,7 @@
       "Services": {
         "variants": {
           "PawJoyServices1": {
+            "id": "services",
             "tagline": "Our Services",
             "taglineIcon": "paw",
             "headingPart1": "Complete Care for Your ",
@@ -385,6 +388,7 @@
       "WhyChooseUs": {
         "variants": {
           "PawJoyWhyChooseUs1": {
+            "id": "why-choose-us",
             "image": {
               "src": "/whychooseus.webp",
               "alt": "Professional groomer gently brushing cute shih tzu dog wearing purple PawJoy bandana"
@@ -553,11 +557,16 @@
       "Testimonial": {
         "variants": {
           "PawJoyTestimonial1": {
+            "id": "testimonials",
             "tagline": "Testimonials",
             "taglineIcon": "paw",
             "headingPart1": "Happy Pet Parents, ",
             "headingHighlight": "Happy Pets",
             "description": "Hear what our customers say about their experience with PawJoy.",
+            "carouselAriaLabel": "Customer reviews",
+            "prevButtonAriaLabel": "Previous review",
+            "nextButtonAriaLabel": "Next review",
+            "dotAriaLabelPrefix": "Go to review",
             "sideImage": {
               "src": "/testimonial.webp",
               "alt": "Happy woman smiling and hugging her golden retriever"

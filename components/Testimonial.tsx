@@ -1,31 +1,21 @@
 "use client";
- 
+
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import contentData from "@/data/content.json";
 import { TestimonialData } from "@/data/type";
- 
+
 interface TestimonialProps {
   data?: TestimonialData;
 }
- 
+
 type ReviewType = TestimonialData["reviews"][number];
- 
-const SLIDE_MS = 650; // must match the track transition below
+
+const SLIDE_MS = 650;
 const AUTOPLAY_MS = 6000;
 const PAUSE_AFTER_USER_MS = 9000;
- 
-/*
- * Glitch-proofing notes
- * - The carousel is a looping track (4 copies of the reviews). After every move the track is
- *   silently re-centred with transitions switched off, so the loop never visibly jumps.
- * - Moves are ignored while a slide is running, so fast clicks can never run past the copies.
- * - Card hover / spotlight is driven from a stationary wrapper (the flex item), not the lifted card.
- * - Entrance animations use their own layers or independent CSS properties (scale / rotate / translate).
- * - Highlights use a colour wave rather than background-clip: text.
- */
+
 const TM_CSS = `
-/* ---------- shared keyframes ---------- */
 @keyframes tm-line { from { opacity: 0; transform: scaleX(0); } }
 @keyframes tm-pill { from { opacity: 0; transform: translateY(14px) scale(0.6); } }
 @keyframes tm-ch { from { opacity: 0; transform: translateY(0.6em) rotate(8deg) scale(0.7); filter: blur(6px); } }
@@ -51,8 +41,7 @@ const TM_CSS = `
   0% { transform: translateX(-160%) skewX(-20deg); }
   22%, 100% { transform: translateX(380%) skewX(-20deg); }
 }
- 
-/* ---------- header ---------- */
+
 .tm-hd:not(.tm-in) .tm-hx { opacity: 0; }
 .tm-ll { transform-origin: right center; }
 .tm-lr { transform-origin: left center; }
@@ -78,8 +67,7 @@ const TM_CSS = `
   transform: translateX(-160%) skewX(-20deg);
   animation: tm-sheen 6s ease-in-out 2.5s infinite;
 }
- 
-/* ---------- background: cursor depth, paws, wave ---------- */
+
 .tm-par {
   transform: translate3d(calc(var(--mx, 0) * var(--k, 0) * 1px), calc(var(--my, 0) * var(--k, 0) * 1px), 0);
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
@@ -96,8 +84,7 @@ const TM_CSS = `
   animation: tm-wave-in 1.3s cubic-bezier(0.22, 1, 0.36, 1) backwards,
              tm-wave-sway 7s ease-in-out 1.3s infinite alternate;
 }
- 
-/* ---------- side photo ---------- */
+
 .tm-img:not(.tm-in) { opacity: 0; }
 @keyframes tm-img-in { from { opacity: 0; transform: translate3d(-60px, 30px, 0) scale(0.9); } }
 .tm-img.tm-in { animation: tm-img-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s backwards; }
@@ -105,8 +92,7 @@ const TM_CSS = `
 .tm-in .tm-bobber { animation: tm-bob 5s ease-in-out 1.4s infinite alternate; }
 @keyframes tm-glow { from { opacity: 0.7; scale: 1; } to { opacity: 1; scale: 1.08; } }
 .tm-glow { animation: tm-glow 4s ease-in-out infinite alternate; }
- 
-/* ---------- carousel ---------- */
+
 .tm-view {
   overflow-x: clip;
   overflow-y: visible;
@@ -127,7 +113,7 @@ const TM_CSS = `
 @media (min-width: 768px) { .tm-track { --v: 2; --g: 20px; } }
 @media (min-width: 1024px) { .tm-track { --v: 3; --g: 14px; } }
 .tm-track.tm-instant { transition: none !important; }
- 
+
 .tm-cwrap {
   flex: 0 0 calc((100% - (var(--v) - 1) * var(--g)) / var(--v));
   min-width: 0;
@@ -136,8 +122,7 @@ const TM_CSS = `
 .tm-view:not(.tm-in) .tm-cwrap { opacity: 0; }
 @keyframes tm-rise { from { opacity: 0; transform: translate3d(0, 50px, 0) scale(0.95); } }
 .tm-view.tm-in .tm-cwrap { animation: tm-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--cd, 0s) backwards; }
- 
-/* card hover is driven by the stationary wrapper, so a lifted card never flickers */
+
 .tm-card { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease; }
 .tm-cwrap:hover .tm-card { transform: translateY(-5px); box-shadow: 0 14px 32px rgba(64, 0, 85, 0.15); }
 .tm-spot {
@@ -147,8 +132,7 @@ const TM_CSS = `
   pointer-events: none;
 }
 .tm-cwrap:hover .tm-spot { opacity: 1; }
- 
-/* card text + details */
+
 .tm-view.tm-in .tm-bw { animation: tm-bw 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--cd, 0s) + var(--d, 0s)) backwards; }
 .tm-view.tm-in .tm-nc { animation: tm-ch 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--cd, 0s) + var(--d, 0s)) backwards; }
 @keyframes tm-star-in { from { scale: 0; rotate: -120deg; opacity: 0; } }
@@ -171,8 +155,7 @@ const TM_CSS = `
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
 }
 .tm-cwrap:hover .tm-ring { opacity: 1; transform: scale(1); }
- 
-/* ---------- controls ---------- */
+
 .tm-ct:not(.tm-in) .tm-hx { opacity: 0; }
 @keyframes tm-from-l { from { opacity: 0; transform: translate3d(-40px, 0, 0) rotate(-120deg) scale(0.5); } }
 @keyframes tm-from-r { from { opacity: 0; transform: translate3d(40px, 0, 0) rotate(120deg) scale(0.5); } }
@@ -186,7 +169,7 @@ const TM_CSS = `
 .tm-in .tm-dot { animation: tm-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) backwards; }
 @keyframes tm-ping { from { opacity: 0.5; transform: scale(1); } to { opacity: 0; transform: scale(2.4); } }
 .tm-ping { animation: tm-ping 0.8s cubic-bezier(0, 0, 0.2, 1) forwards; }
- 
+
 @media (prefers-reduced-motion: reduce) {
   .tm-in .tm-ll, .tm-in .tm-lr, .tm-in .tm-pill, .tm-in .tm-ch, .tm-in .tm-cd, .tm-in .tm-wv,
   .tm-in .tm-hw, .tm-in .tm-bw, .tm-in .tm-spark, .tm-wiggle, .tm-pill-sheen,
@@ -202,7 +185,7 @@ const TM_CSS = `
   .tm-track, .tm-card, .tm-par, .tm-qm, .tm-av, .tm-ring { transition: none !important; }
 }
 `;
- 
+
 function PawSvg({
   fill = "#DFCCF0",
   className = "",
@@ -230,7 +213,7 @@ function PawSvg({
     </svg>
   );
 }
- 
+
 function SparkleSvg({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <svg viewBox="0 0 24 24" className={className} style={style} fill="#C77DEB" aria-hidden>
@@ -238,7 +221,7 @@ function SparkleSvg({ className = "", style }: { className?: string; style?: Rea
     </svg>
   );
 }
- 
+
 function StarIcon({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
@@ -246,7 +229,7 @@ function StarIcon({ className = "", style }: { className?: string; style?: React
     </svg>
   );
 }
- 
+
 function ChevronIcon({ dir, className = "" }: { dir: "l" | "r"; className?: string }) {
   return (
     <svg
@@ -262,12 +245,11 @@ function ChevronIcon({ dir, className = "" }: { dir: "l" | "r"; className?: stri
     </svg>
   );
 }
- 
-/** Fires once when the element scrolls into view. */
+
 function useInView<T extends HTMLElement>(threshold = 0.2, rootMargin = "0px 0px -8% 0px") {
   const ref = useRef<T>(null);
   const [inView, setInView] = useState(false);
- 
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -283,13 +265,13 @@ function useInView<T extends HTMLElement>(threshold = 0.2, rootMargin = "0px 0px
     io.observe(el);
     return () => io.disconnect();
   }, [threshold, rootMargin]);
- 
+
   return [ref, inView] as const;
 }
- 
+
 const words = (text: string) => text.trim().split(/\s+/).filter(Boolean);
 const dv = (s: number) => ({ "--d": `${s}s` } as React.CSSProperties);
- 
+
 function renderChars(
   text: string,
   cls: string,
@@ -322,7 +304,7 @@ function renderChars(
     </React.Fragment>
   ));
 }
- 
+
 function renderMaskWords(text: string, base: number, step: number) {
   return words(text).map((w, i) => (
     <React.Fragment key={i}>
@@ -334,7 +316,7 @@ function renderMaskWords(text: string, base: number, step: number) {
     </React.Fragment>
   ));
 }
- 
+
 function renderBlurWords(text: string, base: number, step: number, hx = true) {
   const ws = words(text);
   return ws.map((w, i) => (
@@ -346,19 +328,18 @@ function renderBlurWords(text: string, base: number, step: number, hx = true) {
     </React.Fragment>
   ));
 }
- 
+
 export default function Testimonial({ data: customData }: TestimonialProps) {
   const testimonialData =
     customData ||
     (contentData.PawJoy.sections.Testimonial.variants
       .PawJoyTestimonial1 as TestimonialData);
- 
+
   const reviews = testimonialData.reviews;
   const n = reviews.length;
   const loop = n > 1;
   const copies = loop ? 4 : 1;
- 
-  // ---------- carousel state ----------
+
   const [pos, setPos] = useState<number>(loop ? n : 0);
   const [instant, setInstant] = useState(false);
   const posRef = useRef<number>(loop ? n : 0);
@@ -368,10 +349,9 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
   const visibleRef = useRef(false);
   const resumeAtRef = useRef(0);
   const swipeRef = useRef<{ x: number; y: number } | null>(null);
- 
+
   const activeIndex = loop ? ((pos % n) + n) % n : 0;
- 
-  // after a slide: silently re-centre onto the middle copy (transition off), then re-enable
+
   const settle = useCallback(() => {
     if (!loop) {
       busyRef.current = false;
@@ -393,7 +373,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
       busyRef.current = false;
     }
   }, [loop, n]);
- 
+
   const moveTo = useCallback(
     (target: number) => {
       if (!loop || busyRef.current) return;
@@ -405,7 +385,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
     },
     [loop, settle]
   );
- 
+
   const go = useCallback(
     (dir: 1 | -1, fromUser = false) => {
       if (fromUser) resumeAtRef.current = Date.now() + PAUSE_AFTER_USER_MS;
@@ -413,7 +393,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
     },
     [moveTo]
   );
- 
+
   const jumpTo = (j: number) => {
     resumeAtRef.current = Date.now() + PAUSE_AFTER_USER_MS;
     const idx = ((posRef.current % n) + n) % n;
@@ -422,21 +402,19 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
     if (diff < -n / 2) diff += n;
     if (diff !== 0) moveTo(posRef.current + diff);
   };
- 
+
   useEffect(() => {
     return () => {
       if (slideTimer.current) clearTimeout(slideTimer.current);
     };
   }, []);
- 
-  // ---------- reveal + parallax ----------
+
   const [secRef, secIn] = useInView<HTMLElement>(0.05, "0px");
   const [hdRef, hdIn] = useInView<HTMLDivElement>(0.3);
   const [imgRef, imgIn] = useInView<HTMLDivElement>(0.2);
   const [vwRef, vwIn] = useInView<HTMLDivElement>(0.15, "0px 0px -6% 0px");
   const [ctRef, ctIn] = useInView<HTMLDivElement>(0.4, "0px");
- 
-  // live visibility, used to pause autoplay while the carousel is off-screen
+
   useEffect(() => {
     const el = vwRef.current;
     if (!el) return;
@@ -446,8 +424,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
     io.observe(el);
     return () => io.disconnect();
   }, [vwRef]);
- 
-  // gentle autoplay: pauses on hover/focus/touch, when hidden or off-screen, and after any interaction
+
   useEffect(() => {
     if (!loop) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -458,8 +435,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
     }, AUTOPLAY_MS);
     return () => clearInterval(id);
   }, [loop, go]);
- 
-  // cursor-driven depth for the background (mouse only)
+
   const onSecMove = (e: React.PointerEvent<HTMLElement>) => {
     if (e.pointerType !== "mouse") return;
     const el = e.currentTarget;
@@ -471,8 +447,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
     e.currentTarget.style.setProperty("--mx", "0");
     e.currentTarget.style.setProperty("--my", "0");
   };
- 
-  // per-card spotlight, written on the stationary wrapper
+
   const onCardMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== "mouse") return;
     const el = e.currentTarget;
@@ -480,8 +455,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
     el.style.setProperty("--sx", `${((e.clientX - r.left) / r.width) * 100}%`);
     el.style.setProperty("--sy", `${((e.clientY - r.top) / r.height) * 100}%`);
   };
- 
-  // swipe (touch / pen) and keyboard
+
   const onViewDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === "mouse") return;
     hoverRef.current = true;
@@ -506,20 +480,19 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
       go(-1, true);
     }
   };
- 
-  // ---------- heading timing ----------
+
   const part1 = words(testimonialData.headingPart1);
   const highlightChars = Array.from(testimonialData.headingHighlight.trim());
   const hlStart = 0.25 + part1.length * 0.09 + 0.1;
   const underlineDelay = hlStart + highlightChars.length * 0.045 + 0.35;
- 
+
   const items: { rev: ReviewType; c: number; k: number }[] = [];
   for (let c = 0; c < copies; c++) reviews.forEach((rev, k) => items.push({ rev, c, k }));
- 
+
   return (
     <section
       ref={secRef}
-      id="testimonials"
+      id={testimonialData.id || "testimonials"}
       onPointerMove={onSecMove}
       onPointerLeave={onSecLeave}
       className={`tm-sec relative w-full overflow-hidden bg-[#FCF8FF] pt-10 sm:pt-12 lg:pt-12 pb-8 sm:pb-9 ${
@@ -527,7 +500,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
       }`}
     >
       <style dangerouslySetInnerHTML={{ __html: TM_CSS }} />
- 
+
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div
           style={{ "--k": -18 } as React.CSSProperties}
@@ -545,7 +518,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
           style={{ "--k": -12 } as React.CSSProperties}
           className="tm-par absolute -right-32 bottom-[-100px] w-[350px] h-[430px] rounded-l-full bg-[#EEDBFA]/70"
         />
- 
+
         {testimonialData.backgroundPaws.map((paw, idx) => (
           <div
             key={idx}
@@ -562,7 +535,6 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
             }
             className="tm-paw-in absolute pointer-events-none select-none z-0"
           >
-            {/* depth layer + idle float layer */}
             <div
               className="tm-par"
               style={{ "--k": ((idx % 3) + 1) * 9 * (idx % 2 ? -1 : 1) } as React.CSSProperties}
@@ -573,7 +545,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
             </div>
           </div>
         ))}
- 
+
         <svg
           className="tm-wavesvg absolute bottom-0 left-0 w-full h-[110px] sm:h-[150px] lg:h-[170px]"
           viewBox="0 0 1500 170"
@@ -592,16 +564,15 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
           />
         </svg>
       </div>
- 
+
       <div className="relative z-10 max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-5">
-        {/* ---------- header ---------- */}
         <div
           ref={hdRef}
           className={`tm-hd flex flex-col items-center text-center mb-6 sm:mb-8 lg:mb-7 ${hdIn ? "tm-in" : ""}`}
         >
           <div className="flex items-center justify-center gap-2.5 sm:gap-4 mb-2.5">
             <span className="tm-hx tm-ll w-7 sm:w-16 h-[2px] bg-[#8B1EB7] rounded-full" />
- 
+
             <div className="tm-hx tm-pill relative overflow-hidden inline-flex items-center gap-2 sm:gap-2.5 px-3.5 sm:px-6 py-1.5 sm:py-2 rounded-full bg-[#F0DDF9] border border-[#E8D2F3] shadow-sm">
               <PawSvg size={22} fill="#71008D" className="tm-wiggle w-[18px] h-[18px] sm:w-5 sm:h-5" />
               <span
@@ -612,10 +583,10 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
               </span>
               <span className="tm-pill-sheen pointer-events-none" />
             </div>
- 
+
             <span className="tm-hx tm-lr w-7 sm:w-16 h-[2px] bg-[#8B1EB7] rounded-full" />
           </div>
- 
+
           <h2
             className="text-[26px] sm:text-[36px] md:text-[40px] lg:text-[43px] font-extrabold text-[#39004D] leading-[1.15] tracking-[-0.035em] mb-2"
             style={{ "--wb": "#9014B7", "--wp": "#d58cff" } as React.CSSProperties}
@@ -637,7 +608,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
                     </span>
                   )
                 )}
- 
+
                 <svg
                   viewBox="0 0 300 14"
                   preserveAspectRatio="none"
@@ -655,7 +626,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
                     vectorEffect="non-scaling-stroke"
                   />
                 </svg>
- 
+
                 <SparkleSvg
                   className="tm-spark pointer-events-none absolute -top-1 -right-4 sm:-top-3 sm:-right-8 h-4 w-4 sm:h-6 sm:w-6"
                   style={dv(underlineDelay + 0.2)}
@@ -663,13 +634,12 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
               </span>
             </span>
           </h2>
- 
+
           <p className="text-[#463451] text-sm sm:text-base lg:text-[18px] font-medium leading-relaxed max-w-2xl px-2">
             {renderBlurWords(testimonialData.description, 0.8, 0.025)}
           </p>
         </div>
- 
-        {/* ---------- photo + carousel ---------- */}
+
         <div className="grid grid-cols-1 lg:grid-cols-[26%_74%] items-end gap-6 lg:gap-0">
           <div
             ref={imgRef}
@@ -678,7 +648,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
             }`}
           >
             <div className="tm-glow absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-tr from-[#8500A8]/25 to-transparent rounded-full blur-3xl" />
- 
+
             <div className="tm-bobber absolute inset-0">
               <Image
                 src={testimonialData.sideImage.src}
@@ -690,12 +660,12 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
               />
             </div>
           </div>
- 
+
           <div
             ref={vwRef}
             role="region"
             aria-roledescription="carousel"
-            aria-label="Customer reviews"
+            aria-label={testimonialData.carouselAriaLabel || "Customer reviews"}
             tabIndex={0}
             onKeyDown={onViewKey}
             onPointerDown={onViewDown}
@@ -736,7 +706,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
                   >
                     <div className="tm-card relative flex-1 flex flex-col justify-between overflow-hidden bg-white/95 border border-[#E9D7F2] rounded-[23px] sm:rounded-[27px] px-5 sm:px-6 py-5 min-h-[225px] sm:min-h-[235px] lg:min-h-[245px] shadow-[0_5px_12px_rgba(64,0,85,0.07),0_12px_25px_rgba(64,0,85,0.05)]">
                       <div className="tm-spot absolute inset-0" />
- 
+
                       <div className="relative">
                         <div className="flex items-center gap-3 mb-2">
                           <div className="tm-qmwrap flex items-center justify-center w-[48px] h-[40px] rounded-full bg-[#F8EEFC] shrink-0">
@@ -744,7 +714,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
                               “
                             </span>
                           </div>
- 
+
                           <div className="flex items-center gap-[2px] text-[#F6A000]">
                             {Array.from({ length: rev.rating }).map((_, sIdx) => (
                               <StarIcon
@@ -760,15 +730,15 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
                             ))}
                           </div>
                         </div>
- 
+
                         <p className="text-[#28223A] text-[14px] sm:text-[14px] xl:text-[15px] leading-[1.5] sm:leading-[1.45] font-medium">
                           {renderBlurWords(rev.quote, 0.4, 0.016, false)}
                         </p>
                       </div>
- 
+
                       <div className="relative mt-4">
                         <div className="tm-div w-full h-[1.5px] bg-[#E7B6F1] mb-3" />
- 
+
                         <div className="flex items-center gap-3">
                           <div className="tm-avwrap relative w-[52px] h-[52px] sm:w-[56px] sm:h-[56px] shrink-0">
                             <span className="tm-ring pointer-events-none absolute -inset-1 rounded-full border-2 border-[#C77DEB]" />
@@ -782,7 +752,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
                               />
                             </div>
                           </div>
- 
+
                           <div className="min-w-0">
                             <h4
                               aria-label={rev.name}
@@ -810,7 +780,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
                                 ))}
                               </span>
                             </h4>
- 
+
                             <p className="text-[#514263] text-[11.5px] sm:text-[12px] font-medium mt-1 leading-tight">
                               {rev.role}
                             </p>
@@ -824,8 +794,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
             </div>
           </div>
         </div>
- 
-        {/* ---------- bottom controls: prev / dots / next ---------- */}
+
         {loop && (
           <div
             ref={ctRef}
@@ -836,24 +805,24 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
             <button
               type="button"
               onClick={() => go(-1, true)}
-              aria-label="Previous review"
+              aria-label={testimonialData.prevButtonAriaLabel || "Previous review"}
               className="tm-hx tm-al tm-arrow shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#50006A] hover:bg-[#6B0F8C] text-white flex items-center justify-center border-[3px] border-white shadow-[0_8px_20px_rgba(58,0,78,0.3)] transition-[background-color,box-shadow,transform] duration-300 hover:scale-110 hover:shadow-[0_12px_28px_rgba(58,0,78,0.4)] active:scale-90 cursor-pointer"
             >
               <span className="tm-chev-l inline-flex">
                 <ChevronIcon dir="l" className="w-5 h-5" />
               </span>
             </button>
- 
+
             <div className="flex items-center justify-center gap-2.5 sm:gap-3">
               {reviews.map((rev, idx) => {
                 const isActive = activeIndex === idx;
- 
+
                 return (
                   <button
                     key={rev.id}
                     type="button"
                     onClick={() => jumpTo(idx)}
-                    aria-label={`Go to review ${idx + 1}`}
+                    aria-label={`${testimonialData.dotAriaLabelPrefix || "Go to review"} ${idx + 1}`}
                     aria-current={isActive ? "true" : undefined}
                     style={dv(0.4 + idx * 0.08)}
                     className={`tm-hx tm-dot relative rounded-full transition-all duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-pointer ${
@@ -872,11 +841,11 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
                 );
               })}
             </div>
- 
+
             <button
               type="button"
               onClick={() => go(1, true)}
-              aria-label="Next review"
+              aria-label={testimonialData.nextButtonAriaLabel || "Next review"}
               className="tm-hx tm-ar tm-arrow shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#50006A] hover:bg-[#6B0F8C] text-white flex items-center justify-center border-[3px] border-white shadow-[0_8px_20px_rgba(58,0,78,0.3)] transition-[background-color,box-shadow,transform] duration-300 hover:scale-110 hover:shadow-[0_12px_28px_rgba(58,0,78,0.4)] active:scale-90 cursor-pointer"
             >
               <span className="tm-chev-r inline-flex">
@@ -889,4 +858,3 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
     </section>
   );
 }
- 

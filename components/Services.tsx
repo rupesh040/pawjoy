@@ -1,27 +1,17 @@
 "use client";
- 
+
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import contentData from "@/data/content.json";
 import { ServicesData } from "@/data/type";
- 
+
 interface ServicesProps {
   data?: ServicesData;
 }
- 
+
 type CardType = ServicesData["cards"][number];
- 
-/*
- * Glitch-proofing notes
- * - The stagger offset (md:translate-y-*) lives on its own outer wrapper, so no
- *   entrance / hover / tilt transform ever replaces it.
- * - Hover, tilt and cursor tracking are driven from a stationary layer (.sv-wrap),
- *   so a lifted / tilted card can't flicker its own :hover state at the edges.
- * - Text effects never rely on hover transforms of tiny targets (no jitter), and
- *   the highlight uses a colour wave (no background-clip: text quirks).
- */
+
 const SERVICES_CSS = `
-/* ---------- shared ---------- */
 @keyframes sv-line { from { opacity: 0; transform: scaleX(0); } }
 @keyframes sv-pill { from { opacity: 0; transform: translateY(14px) scale(0.6); } }
 @keyframes sv-tg { from { opacity: 0; transform: translateY(10px) rotate(6deg); } }
@@ -51,8 +41,7 @@ const SERVICES_CSS = `
   0% { transform: translateX(-160%) skewX(-20deg); }
   22%, 100% { transform: translateX(380%) skewX(-20deg); }
 }
- 
-/* ---------- header (reveals when it scrolls into view) ---------- */
+
 .sv-hd:not(.sv-in) .sv-hx { opacity: 0; }
 .sv-line-l { transform-origin: right center; }
 .sv-line-r { transform-origin: left center; }
@@ -78,13 +67,11 @@ const SERVICES_CSS = `
   transform: translateX(-160%) skewX(-20deg);
   animation: sv-sheen-pill 6s ease-in-out 2.5s infinite;
 }
- 
-/* ---------- background paws ---------- */
+
 .sv-sec-in .sv-paw-in { animation: sv-paw-in 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0.3s) backwards; }
 .sv-sec:not(.sv-sec-in) .sv-paw-in { opacity: 0; }
 .sv-par { transform: translate3d(0, calc(var(--p, 0) * var(--k, 0) * 1px), 0); will-change: transform; }
- 
-/* ---------- cards ---------- */
+
 .sv-wrap { --cd: 0s; }
 @media (max-width: 767px) { .sv-wrap { --cd: 0s !important; } }
 .sv-wrap:not(.sv-in) { opacity: 0; }
@@ -92,16 +79,14 @@ const SERVICES_CSS = `
   from { opacity: 0; transform: translate3d(0, 70px, 0) rotate(var(--r, 0deg)) scale(0.92); }
 }
 .sv-wrap.sv-in { animation: sv-rise 1.1s cubic-bezier(0.22, 1, 0.36, 1) var(--cd, 0s) backwards; }
- 
-/* tilt + lift: driven by the stationary wrapper's pointer variables */
+
 .sv-card {
   transform: perspective(1000px) rotateX(calc(var(--rx, 0) * 1deg)) rotateY(calc(var(--ry, 0) * 1deg)) translateY(var(--lift, 0px));
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
   will-change: transform;
 }
 .sv-wrap:hover .sv-card { --lift: -10px; box-shadow: 0 24px 48px rgba(58, 0, 78, 0.16); }
- 
-/* photo: wipe-up reveal, settle, cursor parallax, hover zoom, spotlight, sheen */
+
 @keyframes sv-photo-in {
   from { clip-path: inset(100% 0 0 0 round 26px); }
   to { clip-path: inset(0 0 0 0 round 26px); }
@@ -131,8 +116,7 @@ const SERVICES_CSS = `
 }
 .sv-wrap:hover .sv-sheen { opacity: 1; animation: sv-sheen 1s ease-out; }
 @keyframes sv-sheen { from { left: -60%; } to { left: 140%; } }
- 
-/* badge: spring pop, pulsing ring, hover wobble */
+
 @keyframes sv-badge { from { opacity: 0; transform: scale(0) rotate(-120deg); } }
 .sv-in .sv-badge { animation: sv-badge 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--cd, 0s) + 0.7s) backwards; }
 .sv-badge-circle { transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -140,8 +124,7 @@ const SERVICES_CSS = `
 @keyframes sv-ring { 0% { transform: scale(1); opacity: 0.4; } 70%, 100% { transform: scale(1.55); opacity: 0; } }
 .sv-ring { opacity: 0; }
 .sv-in .sv-ring { animation: sv-ring 2.8s ease-out calc(var(--cd, 0s) + 1.8s) infinite; }
- 
-/* icon micro-interactions on card hover */
+
 .sv-bubble { transform-box: fill-box; transform-origin: center; }
 @keyframes sv-bubble {
   0%, 100% { transform: translateY(0) scale(1); }
@@ -160,8 +143,7 @@ const SERVICES_CSS = `
   to { transform: rotate(360deg) scale(1); }
 }
 .sv-wrap:hover .sv-star { animation: sv-spin 0.9s cubic-bezier(0.34, 1.56, 0.64, 1); }
- 
-/* card text */
+
 @keyframes sv-tw { from { opacity: 0; transform: translateY(0.6em); filter: blur(5px); } }
 .sv-tw { display: inline-block; }
 .sv-in .sv-tw { animation: sv-tw 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--cd, 0s) + var(--o, 0.5s)) backwards; }
@@ -179,8 +161,7 @@ const SERVICES_CSS = `
 .sv-wrap:hover .sv-uline { transform: scaleX(1); }
 @keyframes sv-desc { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } }
 .sv-in .sv-desc { animation: sv-desc 1s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--cd, 0s) + 0.9s) backwards; }
- 
-/* watermark paw: pop-in, hover tilt, idle sway (three separate layers) */
+
 @keyframes sv-mark-in { from { scale: 0; rotate: -40deg; opacity: 0; } }
 .sv-in .sv-mark { animation: sv-mark-in 1s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--cd, 0s) + 1s) backwards; }
 .sv-mark-hover { transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -190,7 +171,7 @@ const SERVICES_CSS = `
   to { transform: rotate(5deg) translateY(-4px); }
 }
 .sv-sway { animation: sv-sway 6s ease-in-out infinite alternate; }
- 
+
 @media (prefers-reduced-motion: reduce) {
   .sv-in .sv-line-l, .sv-in .sv-line-r, .sv-in .sv-pill, .sv-in .sv-tg, .sv-in .sv-hw,
   .sv-in .sv-hc, .sv-in .sv-wv, .sv-in .sv-spark, .sv-in .sv-wipe, .sv-wiggle,
@@ -204,7 +185,7 @@ const SERVICES_CSS = `
   .sv-card, .sv-media, .sv-badge-circle, .sv-mark-hover, .sv-uline { transition: none !important; }
 }
 `;
- 
+
 function PawSvg({
   fill = "#DFCCF0",
   className = "",
@@ -232,7 +213,7 @@ function PawSvg({
     </svg>
   );
 }
- 
+
 function SparkleSvg({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <svg viewBox="0 0 24 24" className={className} style={style} fill="#C77DEB" aria-hidden>
@@ -240,7 +221,7 @@ function SparkleSvg({ className = "", style }: { className?: string; style?: Rea
     </svg>
   );
 }
- 
+
 function BathIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -261,7 +242,7 @@ function BathIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
+
 function WalkingIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -282,7 +263,7 @@ function WalkingIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
+
 function TrainingIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -298,12 +279,11 @@ function TrainingIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
- 
-/** Fires once when the element scrolls into view. */
+
 function useInView<T extends HTMLElement>(threshold = 0.2, rootMargin = "0px 0px -8% 0px") {
   const ref = useRef<T>(null);
   const [inView, setInView] = useState(false);
- 
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -319,12 +299,12 @@ function useInView<T extends HTMLElement>(threshold = 0.2, rootMargin = "0px 0px
     io.observe(el);
     return () => io.disconnect();
   }, [threshold, rootMargin]);
- 
+
   return [ref, inView] as const;
 }
- 
+
 const words = (text: string) => text.trim().split(/\s+/).filter(Boolean);
- 
+
 function ServiceCard({
   card,
   idx,
@@ -335,8 +315,7 @@ function ServiceCard({
   staggerClasses: string;
 }) {
   const [ref, inView] = useInView<HTMLDivElement>(0.15, "0px 0px -6% 0px");
- 
-  // pointer variables are written on the stationary wrapper, never on the tilted card
+
   const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== "mouse") return;
     const el = e.currentTarget;
@@ -350,7 +329,7 @@ function ServiceCard({
     el.style.setProperty("--sx", `${x * 100}%`);
     el.style.setProperty("--sy", `${y * 100}%`);
   };
- 
+
   const onLeave = (e: React.PointerEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
     el.style.setProperty("--rx", "0");
@@ -360,12 +339,11 @@ function ServiceCard({
     el.style.setProperty("--sx", "50%");
     el.style.setProperty("--sy", "50%");
   };
- 
+
   const rise = idx === 0 ? "-4deg" : idx === 2 ? "4deg" : "0deg";
   let ci = 0;
- 
+
   return (
-    // outer layer: only the static stagger offset, nothing else ever touches it
     <div className={staggerClasses}>
       <div
         ref={ref}
@@ -393,7 +371,7 @@ function ServiceCard({
               <div className="sv-sheen" />
             </div>
           </div>
- 
+
           <div className="relative">
             <div className="sv-badge absolute -top-7 right-6 sm:right-7 z-20 w-14 h-14 sm:w-16 sm:h-16">
               <span
@@ -408,7 +386,7 @@ function ServiceCard({
                 {card.badgeIcon.name === "training" && <TrainingIcon className="w-6 h-6 text-white" />}
               </div>
             </div>
- 
+
             <div className="px-6 sm:px-7 pt-9 pb-8 sm:pb-9 relative z-10">
               <h3 className="text-xl sm:text-2xl font-extrabold text-[#2E004F] tracking-tight mb-2 group-hover:text-[#8B1EB7] transition-colors duration-300">
                 <span className="relative inline-block">
@@ -444,7 +422,7 @@ function ServiceCard({
                 {card.description}
               </p>
             </div>
- 
+
             <div className="sv-mark absolute -bottom-3 -right-3 pointer-events-none opacity-40">
               <div className="sv-mark-hover">
                 <div className="sv-sway">
@@ -458,21 +436,20 @@ function ServiceCard({
     </div>
   );
 }
- 
+
 export default function Services({ data: customData }: ServicesProps) {
   const servicesData =
     customData ||
     (contentData.PawJoy.sections.Services.variants.PawJoyServices1 as ServicesData);
- 
+
   const [secRef, secIn] = useInView<HTMLElement>(0.05, "0px");
   const [hdRef, hdIn] = useInView<HTMLDivElement>(0.3);
- 
-  // scroll-linked drift for the background paws: writes --p (-1..1) on the section
+
   useEffect(() => {
     const el = secRef.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
- 
+
     let raf = 0;
     const update = () => {
       raf = 0;
@@ -485,7 +462,7 @@ export default function Services({ data: customData }: ServicesProps) {
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
- 
+
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
@@ -495,27 +472,26 @@ export default function Services({ data: customData }: ServicesProps) {
       if (raf) cancelAnimationFrame(raf);
     };
   }, [secRef]);
- 
+
   const d = (s: number) => ({ "--d": `${s}s` } as React.CSSProperties);
- 
-  // heading: part 1 words rise through a mask, the highlight drops in letter by letter
+
   const part1 = words(servicesData.headingPart1);
   const highlightChars = Array.from(servicesData.headingHighlight.trim());
   const hlStart = 0.25 + part1.length * 0.09 + 0.1;
   const underlineDelay = hlStart + highlightChars.length * 0.045 + 0.35;
- 
+
   let tagIdx = 0;
- 
+
   return (
     <section
       ref={secRef}
-      id="services"
+      id={servicesData.id || "services"}
       className={`sv-sec relative w-full bg-white py-16 sm:py-20 lg:py-28 overflow-hidden ${
         secIn ? "sv-sec-in" : ""
       }`}
     >
       <style dangerouslySetInnerHTML={{ __html: SERVICES_CSS }} />
- 
+
       {servicesData.backgroundPaws.map((paw, idx) => (
         <div
           key={idx}
@@ -532,7 +508,6 @@ export default function Services({ data: customData }: ServicesProps) {
           }
           className="sv-paw-in absolute pointer-events-none select-none z-0"
         >
-          {/* layer 2: scroll parallax, layer 3: endless float */}
           <div
             className="sv-par"
             style={{ "--k": ((idx % 3) + 1) * 14 * (idx % 2 ? -1 : 1) } as React.CSSProperties}
@@ -543,7 +518,7 @@ export default function Services({ data: customData }: ServicesProps) {
           </div>
         </div>
       ))}
- 
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
           ref={hdRef}
@@ -581,7 +556,7 @@ export default function Services({ data: customData }: ServicesProps) {
             </div>
             <span className="sv-hx sv-line-r w-10 sm:w-14 h-[1.5px] bg-[#8B1EB7]/60 rounded-full" />
           </div>
- 
+
           <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#2E004F] tracking-tight leading-tight mb-4">
             <span className="sr-only">
               {servicesData.headingPart1}
@@ -612,7 +587,7 @@ export default function Services({ data: customData }: ServicesProps) {
                     </span>
                   )
                 )}
- 
+
                 <svg
                   viewBox="0 0 300 14"
                   preserveAspectRatio="none"
@@ -630,7 +605,7 @@ export default function Services({ data: customData }: ServicesProps) {
                     vectorEffect="non-scaling-stroke"
                   />
                 </svg>
- 
+
                 <SparkleSvg
                   className="sv-spark pointer-events-none absolute -top-1 -right-4 sm:-top-3 sm:-right-8 h-4 w-4 sm:h-6 sm:w-6"
                   style={d(underlineDelay + 0.2)}
@@ -638,7 +613,7 @@ export default function Services({ data: customData }: ServicesProps) {
               </span>
             </span>
           </h2>
- 
+
           <div className="space-y-1">
             {servicesData.descriptionLines.map((line, idx) => (
               <p
@@ -651,7 +626,7 @@ export default function Services({ data: customData }: ServicesProps) {
             ))}
           </div>
         </div>
- 
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-8 items-start pb-8 md:pb-32">
           {servicesData.cards.map((card, idx) => {
             const staggerClasses =
@@ -660,7 +635,7 @@ export default function Services({ data: customData }: ServicesProps) {
                 : idx === 1
                 ? "md:translate-y-12 lg:translate-y-14"
                 : "md:translate-y-24 lg:translate-y-28";
- 
+
             return (
               <ServiceCard
                 key={card.id}
@@ -675,4 +650,3 @@ export default function Services({ data: customData }: ServicesProps) {
     </section>
   );
 }
- 

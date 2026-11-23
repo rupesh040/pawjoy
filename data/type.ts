@@ -10,6 +10,7 @@ export interface HeaderData {
   links: NavLink[];
   button: string;
   buttonHref: string;
+  mobileMenuAriaLabel?: string;
 }
 
 export interface HeroBadge {
@@ -49,6 +50,7 @@ export interface BackgroundPaw {
 }
 
 export interface HeroData {
+  id?: string;
   badge: HeroBadge;
   headingPart1: string;
   headingPart2: string;
@@ -127,6 +129,7 @@ export interface ServiceItem {
 }
 
 export interface ServicesData {
+  id?: string;
   tagline: string;
   taglineIcon: string;
   headingPart1: string;
@@ -174,6 +177,7 @@ export interface WhyChooseUsFeature {
 }
 
 export interface WhyChooseUsData {
+  id?: string;
   image: {
     src: string;
     alt: string;
@@ -239,11 +243,16 @@ export interface TestimonialItem {
 }
 
 export interface TestimonialData {
+  id?: string;
   tagline: string;
   taglineIcon: string;
   headingPart1: string;
   headingHighlight: string;
   description: string;
+  carouselAriaLabel?: string;
+  prevButtonAriaLabel?: string;
+  nextButtonAriaLabel?: string;
+  dotAriaLabelPrefix?: string;
   sideImage: {
     src: string;
     alt: string;
