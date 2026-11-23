@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import contentData from "@/data/content.json";
 import { HeroData } from "@/data/type";
 
@@ -294,39 +293,6 @@ function StethoscopeIcon({ className = "" }: { className?: string }) {
   );
 }
 
-function HomeIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  );
-}
-
 function useTypewriter(text: string, startDelay = 600, speed = 40) {
   const [count, setCount] = useState(0);
 
@@ -357,10 +323,6 @@ export default function Hero({ data: customData }: HeroProps) {
   const heroData =
     customData ||
     (contentData.PawJoy.sections.Hero.variants.PawJoyHero1 as HeroData);
-
-  const [activeSlide, setActiveSlide] = useState<number>(
-    heroData.pagination.activeDotIndex
-  );
 
   const lastIndex = heroData.cards.length - 1;
 
@@ -652,66 +614,43 @@ export default function Hero({ data: customData }: HeroProps) {
                     <div className="hx-card-sheen" />
                   </div>
 
-                  {((card.badges && card.badges.length > 0) ||
-                    card.floatingAction) && (
+                  {card.badges && card.badges.length > 0 && (
                     <div className="pointer-events-none absolute inset-0 z-20 md:skew-x-[9deg]">
-                      {card.badges && card.badges.length > 0 && (
-                        <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2 sm:left-4 sm:top-4 md:left-[44px] xl:gap-[22px]">
-                          {card.badges.map((b, bIdx) => {
-                            const isDark = b.style === "dark";
+                      <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2 sm:left-4 sm:top-4 md:left-[44px] xl:gap-[22px]">
+                        {card.badges.map((b, bIdx) => {
+                          const isDark = b.style === "dark";
 
-                            return (
-                              <div
-                                key={bIdx}
-                                style={{
-                                  animationDelay: `${1.15 + bIdx * 0.12}s`,
-                                }}
-                                className={`hx-pop pointer-events-auto relative inline-flex items-center gap-2 overflow-hidden rounded-full px-3.5 py-2 text-xs font-semibold text-white shadow-[0_4px_12px_rgba(40,0,60,0.2)] backdrop-blur-sm transition-all duration-300 hover:scale-105 sm:text-sm lg:gap-2.5 lg:px-5 lg:py-3 lg:text-base ${
-                                  isDark ? "bg-[#52006D]" : "bg-[#9918C5]"
-                                }`}
-                              >
-                                {b.icon === "paw" && (
-                                  <PawSvg
-                                    size={17}
-                                    fill="#FFFFFF"
-                                    className="hx-wiggle h-4 w-4 lg:h-5 lg:w-5"
-                                  />
-                                )}
-
-                                {b.icon === "stethoscope" && (
-                                  <StethoscopeIcon className="h-4 w-4 text-white lg:h-5 lg:w-5" />
-                                )}
-
-                                <span>{b.text}</span>
-                                <span
-                                  className="hx-bsheen pointer-events-none"
-                                  style={{ animationDelay: `${3 + bIdx * 1.3}s` }}
+                          return (
+                            <div
+                              key={bIdx}
+                              style={{
+                                animationDelay: `${1.15 + bIdx * 0.12}s`,
+                              }}
+                              className={`hx-pop pointer-events-auto relative inline-flex items-center gap-2 overflow-hidden rounded-full px-3.5 py-2 text-xs font-semibold text-white shadow-[0_4px_12px_rgba(40,0,60,0.2)] backdrop-blur-sm transition-all duration-300 hover:scale-105 sm:text-sm lg:gap-2.5 lg:px-5 lg:py-3 lg:text-base ${
+                                isDark ? "bg-[#52006D]" : "bg-[#9918C5]"
+                              }`}
+                            >
+                              {b.icon === "paw" && (
+                                <PawSvg
+                                  size={17}
+                                  fill="#FFFFFF"
+                                  className="hx-wiggle h-4 w-4 lg:h-5 lg:w-5"
                                 />
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                              )}
 
-                      {card.floatingAction && (
-                        <div
-                          style={{ animationDelay: "1.4s" }}
-                          className="hx-pop absolute bottom-3 right-3 sm:bottom-5 sm:right-5 md:bottom-6 md:right-8 lg:bottom-9 lg:right-9"
-                        >
-                          <Link
-                            href={card.floatingAction.href}
-                            className="group/cta pointer-events-auto inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-bold text-[#44005B] shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-300 hover:scale-105 hover:shadow-[0_6px_22px_rgba(0,0,0,0.2)] active:scale-95 sm:px-5 sm:py-3 sm:text-sm lg:gap-3 lg:px-7 lg:py-[17px] lg:text-[17px]"
-                          >
-                            <HomeIcon className="h-[18px] w-[18px] text-[#5B0078] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/cta:-rotate-12 group-hover/cta:scale-110 lg:h-[26px] lg:w-[26px]" />
+                              {b.icon === "stethoscope" && (
+                                <StethoscopeIcon className="h-4 w-4 text-white lg:h-5 lg:w-5" />
+                              )}
 
-                            <span className="whitespace-nowrap">
-                              {card.floatingAction.text}
-                            </span>
-
-                            <ChevronRightIcon className="hx-nudge h-4 w-4 text-[#5B0078] lg:h-[18px] lg:w-[18px]" />
-                          </Link>
-                        </div>
-                      )}
+                              <span>{b.text}</span>
+                              <span
+                                className="hx-bsheen pointer-events-none"
+                                style={{ animationDelay: `${3 + bIdx * 1.3}s` }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -720,36 +659,6 @@ export default function Hero({ data: customData }: HeroProps) {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-3 pt-1">
-          {Array.from({
-            length: heroData.pagination.totalDots,
-          }).map((_, idx) => {
-            const isActive = activeSlide === idx;
-
-            return (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setActiveSlide(idx)}
-                aria-label={heroData.cards[idx]?.alt || `Slide ${idx + 1}`}
-                aria-current={isActive ? "true" : undefined}
-                style={{ animationDelay: `${1.5 + idx * 0.1}s` }}
-                className={`hx-dot relative rounded-full transition-all duration-300 ${
-                  isActive
-                    ? "h-[19px] w-[19px] bg-[#4A005F] shadow-sm"
-                    : "h-[17px] w-[17px] bg-[#DCC1EB] hover:scale-110 hover:bg-[#BB91D3]"
-                }`}
-              >
-                {isActive && (
-                  <span
-                    key={activeSlide}
-                    className="hx-ping pointer-events-none absolute inset-0 rounded-full bg-[#4A005F]"
-                  />
-                )}
-              </button>
-            );
-          })}
-        </div>
       </div>
     </section>
   );

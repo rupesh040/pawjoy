@@ -358,16 +358,16 @@ export default function Navbar({ data: customData }: NavbarProps) {
               <Image
                 src={headerData.logo}
                 alt={headerData.logoAlt}
-                width={140}
-                height={46}
+                width={190}
+                height={62}
                 className={`nv-logo-img w-auto object-contain ${
-                  isScrolled ? "h-9 sm:h-10" : "h-10 sm:h-11"
+                  isScrolled ? "h-11 sm:h-12" : "h-13 sm:h-14 lg:h-[58px]"
                 }`}
                 priority
               />
             </Link>
 
-            <div className="nv-divider hidden xl:block h-7 w-[1.5px] bg-[#d8b4e2]/70 mx-6 self-center" />
+            <div className="nv-divider hidden xl:block h-8 w-[1.5px] bg-[#d8b4e2]/70 mx-6 self-center" />
           </div>
 
           <nav
@@ -442,14 +442,7 @@ export default function Navbar({ data: customData }: NavbarProps) {
             />
           </div>
 
-          <div className="nv-pop flex xl:hidden items-center space-x-3" style={{ "--d": "300ms" } as React.CSSProperties}>
-            <CtaButton
-              href={headerData.buttonHref}
-              label={headerData.button}
-              onClick={(e) => handleButtonClick(e, headerData.buttonHref)}
-              className="inline-flex items-center justify-center px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-white bg-[#3a004e] hover:bg-[#4f006b] shadow-sm active:scale-95 transition-all duration-300"
-            />
-
+          <div className="nv-pop flex xl:hidden items-center" style={{ "--d": "300ms" } as React.CSSProperties}>
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

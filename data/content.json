@@ -196,12 +196,7 @@
                     "icon": "stethoscope",
                     "style": "purple"
                   }
-                ],
-                "floatingAction": {
-                  "text": "Boarding & Daycare",
-                  "icon": "home",
-                  "href": "#services"
-                }
+                ]
               },
               {
                 "id": "3",
@@ -798,7 +793,7 @@
               "src": "/footer-pet.webp",
               "alt": "Happy golden retriever and tabby cat lying down peacefully"
             },
-            "copyright": "© 2026 PawJoy Pet Care & Wellness. All Rights Reserved."
+            "copyright": "© 2026 PawJoy Pet Care & Wellness All Rights Reserved. Powered by Lestow"
           }
         }
       }

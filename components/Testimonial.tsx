@@ -88,10 +88,7 @@ const TM_CSS = `
 .tm-img:not(.tm-in) { opacity: 0; }
 @keyframes tm-img-in { from { opacity: 0; transform: translate3d(-60px, 30px, 0) scale(0.9); } }
 .tm-img.tm-in { animation: tm-img-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s backwards; }
-@keyframes tm-bob { from { translate: 0 0; } to { translate: 0 -8px; } }
-.tm-in .tm-bobber { animation: tm-bob 5s ease-in-out 1.4s infinite alternate; }
-@keyframes tm-glow { from { opacity: 0.7; scale: 1; } to { opacity: 1; scale: 1.08; } }
-.tm-glow { animation: tm-glow 4s ease-in-out infinite alternate; }
+.tm-glow { opacity: 0.8; }
 
 .tm-view {
   overflow-x: clip;
@@ -173,7 +170,7 @@ const TM_CSS = `
 @media (prefers-reduced-motion: reduce) {
   .tm-in .tm-ll, .tm-in .tm-lr, .tm-in .tm-pill, .tm-in .tm-ch, .tm-in .tm-cd, .tm-in .tm-wv,
   .tm-in .tm-hw, .tm-in .tm-bw, .tm-in .tm-spark, .tm-wiggle, .tm-pill-sheen,
-  .tm-sec-in .tm-paw-in, .tm-floaty, .tm-sec-in .tm-wavesvg, .tm-img.tm-in, .tm-in .tm-bobber,
+  .tm-sec-in .tm-paw-in, .tm-floaty, .tm-sec-in .tm-wavesvg, .tm-img.tm-in,
   .tm-glow, .tm-view.tm-in .tm-cwrap, .tm-view.tm-in .tm-bw, .tm-view.tm-in .tm-nc,
   .tm-view.tm-in .tm-star, .tm-cwrap:hover .tm-star, .tm-view.tm-in .tm-qmwrap,
   .tm-view.tm-in .tm-div, .tm-view.tm-in .tm-avwrap, .tm-in .tm-al, .tm-in .tm-ar,
@@ -495,7 +492,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
       id={testimonialData.id || "testimonials"}
       onPointerMove={onSecMove}
       onPointerLeave={onSecLeave}
-      className={`tm-sec relative w-full overflow-hidden bg-[#FCF8FF] pt-10 sm:pt-12 lg:pt-12 pb-8 sm:pb-9 ${
+      className={`tm-sec relative w-full overflow-hidden bg-[#FCF8FF] pt-10 sm:pt-12 lg:pt-12 pb-8 sm:pb-9 lg:pb-0 ${
         secIn ? "tm-sec-in" : ""
       }`}
     >
@@ -641,23 +638,25 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[26%_74%] items-end gap-6 lg:gap-0">
-          <div
-            ref={imgRef}
-            className={`tm-img relative w-full max-w-[300px] sm:max-w-[380px] mx-auto lg:mx-0 lg:max-w-none lg:w-[calc(100%+55px)] lg:-ml-[55px] h-[230px] sm:h-[330px] lg:h-[390px] self-end ${
-              imgIn ? "tm-in" : ""
-            }`}
-          >
-            <div className="tm-glow absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-tr from-[#8500A8]/25 to-transparent rounded-full blur-3xl" />
+          <div className="w-full">
+            <div
+              ref={imgRef}
+              className={`tm-img relative lg:absolute lg:bottom-0 lg:left-0 w-full max-w-[300px] sm:max-w-[380px] mx-auto lg:mx-0 lg:max-w-none lg:w-[calc(26%+20px)] lg:max-w-[420px] h-[230px] sm:h-[330px] lg:h-[420px] xl:h-[460px] 2xl:h-[490px] self-end z-10 pointer-events-none ${
+                imgIn ? "tm-in" : ""
+              }`}
+            >
+              <div className="tm-glow absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-tr from-[#8500A8]/25 to-transparent rounded-full blur-3xl" />
 
-            <div className="tm-bobber absolute inset-0">
-              <Image
-                src={testimonialData.sideImage.src}
-                alt={testimonialData.sideImage.alt}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 30vw"
-                className="relative z-10 object-contain object-bottom transition-transform duration-700 hover:scale-[1.03]"
-              />
+              <div className="absolute inset-0">
+                <Image
+                  src={testimonialData.sideImage.src}
+                  alt={testimonialData.sideImage.alt}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 30vw"
+                  className="relative z-10 object-contain object-bottom transition-transform duration-700 hover:scale-[1.03] pointer-events-auto"
+                />
+              </div>
             </div>
           </div>
 
@@ -798,7 +797,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
         {loop && (
           <div
             ref={ctRef}
-            className={`tm-ct relative z-20 flex items-center justify-center gap-3 sm:gap-5 mt-7 sm:mt-8 lg:mt-7 ${
+            className={`tm-ct relative z-20 flex items-center justify-center gap-3 sm:gap-5 mt-7 sm:mt-8 lg:mt-7 lg:pb-9 ${
               ctIn ? "tm-in" : ""
             }`}
           >
