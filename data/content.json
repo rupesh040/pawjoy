@@ -1,0 +1,798 @@
+{
+  "PawJoy": {
+    "templateComponents": {
+      "template-1": {
+        "shared": {
+          "Header": "PawJoyHeader1",
+          "Footer": "PawJoyFooter1"
+        },
+        "pages": {
+          "home": {
+            "components": [
+              {
+                "key": "Header",
+                "component": "PawJoyHeader1"
+              },
+              {
+                "key": "Hero",
+                "component": "PawJoyHero1"
+              },
+              {
+                "key": "About",
+                "component": "PawJoyAbout1"
+              },
+              {
+                "key": "Services",
+                "component": "PawJoyServices1"
+              },
+              {
+                "key": "WhyChooseUs",
+                "component": "PawJoyWhyChooseUs1"
+              },
+              {
+                "key": "Gallery",
+                "component": "PawJoyGallery1"
+              },
+              {
+                "key": "Testimonial",
+                "component": "PawJoyTestimonial1"
+              },
+              {
+                "key": "FAQ",
+                "component": "PawJoyFAQ1"
+              },
+              {
+                "key": "Contact",
+                "component": "PawJoyContact1"
+              },
+              {
+                "key": "Footer",
+                "component": "PawJoyFooter1"
+              }
+            ]
+          },
+          "about-us": {
+            "components": [
+              {
+                "key": "About",
+                "component": "PawJoyAbout1"
+              }
+            ]
+          },
+          "services": {
+            "components": [
+              {
+                "key": "ServicesListing",
+                "component": "PawJoyServices1"
+              }
+            ]
+          },
+          "why-choose-us": {
+            "components": [
+              {
+                "key": "WhyChooseUs",
+                "component": "PawJoyWhyChooseUs1"
+              }
+            ]
+          },
+          "gallery": {
+            "components": [
+              {
+                "key": "Gallery",
+                "component": "PawJoyGallery1"
+              }
+            ]
+          },
+          "testimonials": {
+            "components": [
+              {
+                "key": "Testimonial",
+                "component": "PawJoyTestimonial1"
+              }
+            ]
+          },
+          "faq": {
+            "components": [
+              {
+                "key": "FAQ",
+                "component": "PawJoyFAQ1"
+              }
+            ]
+          },
+          "contact": {
+            "components": [
+              {
+                "key": "ContactDetails",
+                "component": "PawJoyContact1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "sections": {
+      "Header": {
+        "variants": {
+          "PawJoyHeader1": {
+            "logo": "/logo.png",
+            "logoAlt": "PawJoy Logo",
+            "links": [
+              {
+                "name": "Home",
+                "href": "#home",
+                "active": true
+              },
+              {
+                "name": "About Us",
+                "href": "#about",
+                "active": false
+              },
+              {
+                "name": "Our Services",
+                "href": "#services",
+                "active": false
+              },
+              {
+                "name": "Why Choose Us",
+                "href": "#why-choose-us",
+                "active": false
+              },
+              {
+                "name": "Gallery",
+                "href": "#gallery",
+                "active": false
+              },
+              {
+                "name": "Testimonials",
+                "href": "#testimonials",
+                "active": false
+              },
+              {
+                "name": "FAQs",
+                "href": "#faqs",
+                "active": false
+              }
+            ],
+            "button": "Contact Us",
+            "buttonHref": "#contact"
+          }
+        }
+      },
+      "Hero": {
+        "variants": {
+          "PawJoyHero1": {
+            "badge": {
+              "text": "Professional Pet Care Services",
+              "icon": "paw"
+            },
+            "headingPart1": "Welcome to Your Pet’s",
+            "headingPart2": "Second Home!",
+            "descriptionLines": [
+              "Loving care, expert attention, and a safe, happy space",
+              "for your furry friends."
+            ],
+            "cards": [
+              {
+                "id": "1",
+                "image": "/hero-1.webp",
+                "alt": "Happy Golden Retriever smiling",
+                "cutoutSide": "left"
+              },
+              {
+                "id": "2",
+                "image": "/hero-2.webp",
+                "alt": "Pet grooming and veterinary care examination",
+                "cutoutSide": "none",
+                "badges": [
+                  {
+                    "text": "Grooming",
+                    "icon": "paw",
+                    "style": "dark"
+                  },
+                  {
+                    "text": "Veterinary Care",
+                    "icon": "stethoscope",
+                    "style": "purple"
+                  }
+                ],
+                "floatingAction": {
+                  "text": "Boarding & Daycare",
+                  "icon": "home",
+                  "href": "#services"
+                }
+              },
+              {
+                "id": "3",
+                "image": "/hero-3.webp",
+                "alt": "Curious Tabby Cat looking up",
+                "cutoutSide": "right"
+              }
+            ],
+            "pagination": {
+              "totalDots": 3,
+              "activeDotIndex": 1
+            },
+            "backgroundPaws": [
+              {
+                "top": "8%",
+                "left": "4%",
+                "rotate": -20,
+                "size": 130,
+                "opacity": 0.95
+              },
+              {
+                "top": "12%",
+                "right": "4%",
+                "rotate": 18,
+                "size": 135,
+                "opacity": 0.95
+              }
+            ],
+            "tagline": "PET CARE & WELLNESS",
+            "heading": "Loving Care For Your Furry Friends",
+            "headingLines": [
+              "Loving Care",
+              "For Your Furry",
+              "Friends"
+            ],
+            "description": "Your trusted partner in providing compassionate veterinary care, luxury grooming, and comfortable daycare services.",
+            "backgroundImage": "/hero-1.webp",
+            "ctaButton": {
+              "text": "Contact Us",
+              "href": "#contact"
+            }
+          }
+        }
+      },
+      "About": {
+        "variants": {
+          "PawJoyAbout1": {
+            "id": "about",
+            "tagline": "About Us",
+            "taglineIcon": "paw",
+            "headingPart1": "Compassionate Care",
+            "headingPart2Prefix": "for Your ",
+            "headingHighlight": "Furry Family",
+            "description": "At PawJoy, we believe pets are family. Our mission is to provide loving, professional, and personalized care that keeps your pets healthy, happy, and stress-free.",
+            "leftImage": {
+              "src": "/about.webp",
+              "alt": "Two cute brown puppies wearing bandanas sitting inside a teepee"
+            },
+            "rightImage": {
+              "src": "/about-2.webp",
+              "alt": "Two happy smiling dogs sitting side-by-side on a couch wearing bandanas"
+            },
+            "heading": "Compassionate Care for Your Furry Family",
+            "image": "/about.webp",
+            "stats": [
+              { "value": "12+", "label": "Years of Care" },
+              { "value": "15K+", "label": "Happy Pets" },
+              { "value": "30+", "label": "Pet Specialists" },
+              { "value": "100%", "label": "Love & Attention" }
+            ]
+          }
+        }
+      },
+      "Services": {
+        "variants": {
+          "PawJoyServices1": {
+            "tagline": "Our Services",
+            "taglineIcon": "paw",
+            "headingPart1": "Complete Care for Your ",
+            "headingHighlight": "Beloved Pets",
+            "descriptionLines": [
+              "A wide range of professional pet care services to keep your furry friends",
+              "healthy, happy, and well-cared for."
+            ],
+            "cards": [
+              {
+                "id": "1",
+                "title": "Pet Grooming",
+                "description": "Keep your pets clean, fresh, and looking their best.",
+                "image": "/service-1.webp",
+                "alt": "Golden retriever being bathed and brushed in professional grooming salon",
+                "badgeIcon": {
+                  "name": "bath",
+                  "bgColor": "bg-[#7E22CE]"
+                },
+                "theme": {
+                  "cardBg": "bg-[#FAF5FD]",
+                  "cardBorder": "border-[#EEDEF8]",
+                  "watermarkColor": "#DFCCF0",
+                  "badgeBg": "bg-[#7E22CE]"
+                }
+              },
+              {
+                "id": "2",
+                "title": "Dog Walking",
+                "description": "Daily walks and outdoor exercise to keep your dogs active and healthy.",
+                "image": "/service-2.webp",
+                "alt": "Happy beagle dog walking outdoors on a park trail",
+                "badgeIcon": {
+                  "name": "walking",
+                  "bgColor": "bg-[#0891B2]"
+                },
+                "theme": {
+                  "cardBg": "bg-[#F0FAF9]",
+                  "cardBorder": "border-[#D1F0ED]",
+                  "watermarkColor": "#B2E8E4",
+                  "badgeBg": "bg-[#0891B2]"
+                }
+              },
+              {
+                "id": "3",
+                "title": "Pet Training",
+                "description": "Fun and positive reward-based training to encourage great behavior.",
+                "image": "/service-3.webp",
+                "alt": "Small cute dog doing high-five during training practice",
+                "badgeIcon": {
+                  "name": "training",
+                  "bgColor": "bg-[#EA580C]"
+                },
+                "theme": {
+                  "cardBg": "bg-[#FDF6F0]",
+                  "cardBorder": "border-[#FDE3CF]",
+                  "watermarkColor": "#FCD5B5",
+                  "badgeBg": "bg-[#EA580C]"
+                }
+              }
+            ],
+            "backgroundPaws": [
+              {
+                "top": "6%",
+                "left": "3%",
+                "rotate": -18,
+                "size": 130,
+                "opacity": 0.95
+              },
+              {
+                "top": "8%",
+                "right": "3%",
+                "rotate": 18,
+                "size": 130,
+                "opacity": 0.95
+              }
+            ],
+            "taglinePrefix": "/",
+            "headingPart2": "Pet Care",
+            "description": "From preventive health checks to premium spa treatments, we offer everything your pet needs to thrive.",
+            "items": [
+              {
+                "id": "1",
+                "title": "Wellness & Vaccination",
+                "image": "/service-1.webp",
+                "href": "#contact",
+                "isFeatured": false
+              },
+              {
+                "id": "2",
+                "title": "Spa & Grooming",
+                "image": "/service-2.webp",
+                "href": "#contact",
+                "isFeatured": false
+              },
+              {
+                "id": "3",
+                "title": "Pet Hotel & Daycare",
+                "image": "/service-3.webp",
+                "href": "#contact",
+                "isFeatured": false
+              }
+            ]
+          }
+        }
+      },
+      "WhyChooseUs": {
+        "variants": {
+          "PawJoyWhyChooseUs1": {
+            "image": {
+              "src": "/whychooseus.webp",
+              "alt": "Professional groomer gently brushing cute shih tzu dog wearing purple PawJoy bandana"
+            },
+            "achievements": {
+              "tagline": "Our Achievements",
+              "description": "A proud record of providing trusted, loving, and professional care for pets and their families.",
+              "stats": [
+                {
+                  "icon": "paw",
+                  "value": "5,000+",
+                  "label": "Happy Pets"
+                },
+                {
+                  "icon": "users",
+                  "value": "2,500+",
+                  "label": "Pet Parents"
+                },
+                {
+                  "icon": "calendar",
+                  "value": "10+",
+                  "label": "Years of Care"
+                },
+                {
+                  "icon": "award",
+                  "value": "99%",
+                  "label": "Client Satisfaction"
+                }
+              ]
+            },
+            "card": {
+              "tagline": "WHY CHOOSE US",
+              "taglineIcon": "paw",
+              "headingPart1": "The Best Care for",
+              "headingPart2Prefix": "Your ",
+              "headingHighlight": "Beloved Pets.",
+              "description": "We combine expert care, a safe environment, and a true love for animals to give your pets the comfort, attention, and care they deserve.",
+              "features": [
+                {
+                  "id": "1",
+                  "text": "Experienced & Caring Team"
+                },
+                {
+                  "id": "2",
+                  "text": "Personalized Pet Care"
+                },
+                {
+                  "id": "3",
+                  "text": "Safe & Hygienic Environment"
+                },
+                {
+                  "id": "4",
+                  "text": "Modern Facilities"
+                }
+              ]
+            },
+            "tagline": "WHY CHOOSE US",
+            "headingPart1": "Why Pet Parents Trust",
+            "headingPart2": "PawJoy",
+            "headingHighlight": "Every Day",
+            "description": "We blend veterinary excellence, affectionate caregivers, and state-of-the-art facilities for a stress-free experience.",
+            "features": [
+              {
+                "title": "Certified Veterinarians",
+                "description": "Experienced medical professionals dedicated to your pet's health.",
+                "icon": "shield"
+              },
+              {
+                "title": "Stress-Free Environment",
+                "description": "Calm, climate-controlled spaces designed for pet comfort.",
+                "icon": "heart"
+              },
+              {
+                "title": "Modern Facilities",
+                "description": "Equipped with advanced diagnostic and surgical technologies.",
+                "icon": "sparkles"
+              },
+              {
+                "title": "24/7 Monitoring",
+                "description": "Attentive around-the-clock supervision for overnight boarding.",
+                "icon": "clock"
+              }
+            ],
+            "overlayCard": {
+              "title": "Committed to Pure Love & Comfort",
+              "description": "Delivering compassionate wellness services for every companion animal with safety and gentle care."
+            }
+          }
+        }
+      },
+      "Gallery": {
+        "variants": {
+          "PawJoyGallery1": {
+            "id": "gallery",
+            "tagline": "Our Gallery",
+            "taglineIcon": "paw",
+            "headingPart1": "Moments from Our ",
+            "headingHighlight": "Pet Care Family",
+            "description": "A glimpse of our happy pets, expert care, and the loving environment we provide.",
+            "prevSlideAriaLabel": "Previous gallery slide",
+            "nextSlideAriaLabel": "Next gallery slide",
+            "closeLightboxAriaLabel": "Close image viewer",
+            "prevImageAriaLabel": "Previous image",
+            "nextImageAriaLabel": "Next image",
+            "items": [
+              {
+                "id": "1",
+                "title": "Happy Bath Time",
+                "image": "/gallery-1.webp",
+                "alt": "Golden retriever happily bathed with suds on head"
+              },
+              {
+                "id": "2",
+                "title": "Gentle Styling",
+                "image": "/gallery-2.webp",
+                "alt": "Cute shih tzu dog getting coat trimmed with purple bow"
+              },
+              {
+                "id": "3",
+                "title": "Veterinary Health Exam",
+                "image": "/gallery-3.webp",
+                "alt": "Compassionate female vet examining beagle puppy"
+              },
+              {
+                "id": "4",
+                "title": "Cozy Cat Naps",
+                "image": "/gallery-4.webp",
+                "alt": "Tabby cat resting on a soft purple cat tree"
+              },
+              {
+                "id": "5",
+                "title": "Outdoor Play Park",
+                "image": "/gallery-5.webp",
+                "alt": "Border collie running energetically with a purple ball"
+              },
+              {
+                "id": "6",
+                "title": "Loving Companions",
+                "image": "/gallery-6.webp",
+                "alt": "Golden retriever and cat cuddling peacefully together"
+              }
+            ],
+            "pagination": {
+              "totalDots": 5,
+              "activeDotIndex": 1
+            },
+            "backgroundPaws": [
+              {
+                "top": "8%",
+                "left": "4%",
+                "rotate": -20,
+                "size": 130,
+                "opacity": 0.95
+              },
+              {
+                "top": "12%",
+                "right": "4%",
+                "rotate": 18,
+                "size": 135,
+                "opacity": 0.95
+              }
+            ]
+          }
+        }
+      },
+      "Testimonial": {
+        "variants": {
+          "PawJoyTestimonial1": {
+            "tagline": "Testimonials",
+            "taglineIcon": "paw",
+            "headingPart1": "Happy Pet Parents, ",
+            "headingHighlight": "Happy Pets",
+            "description": "Hear what our customers say about their experience with PawJoy.",
+            "sideImage": {
+              "src": "/testimonial.webp",
+              "alt": "Happy woman smiling and hugging her golden retriever"
+            },
+            "reviews": [
+              {
+                "id": "1",
+                "name": "Priya Sharma",
+                "role": "Pet Parent (Dog Owner)",
+                "avatar": "/avatar-1.webp",
+                "rating": 5,
+                "quote": "Excellent grooming service! My dog looks clean, healthy, and so happy. The staff is very caring and professional. Highly recommended!"
+              },
+              {
+                "id": "2",
+                "name": "Rohit Verma",
+                "role": "Pet Parent (Cat Owner)",
+                "avatar": "/avatar-2.webp",
+                "rating": 5,
+                "quote": "A wonderful experience! My cat was handled with so much care and patience. The grooming and hygiene were fantastic!"
+              },
+              {
+                "id": "3",
+                "name": "Anjali Mehta",
+                "role": "Pet Parent (Dog Owner)",
+                "avatar": "/avatar-3.webp",
+                "rating": 5,
+                "quote": "PawJoy is our go-to place for pet care. The team is friendly, the services are excellent, and my pet always comes back happy!"
+              }
+            ],
+            "pagination": {
+              "totalDots": 4,
+              "activeDotIndex": 1
+            },
+            "backgroundPaws": [
+              {
+                "top": "8%",
+                "left": "4%",
+                "rotate": -20,
+                "size": 130,
+                "opacity": 0.95
+              },
+              {
+                "top": "12%",
+                "right": "4%",
+                "rotate": 18,
+                "size": 135,
+                "opacity": 0.95
+              }
+            ]
+          }
+        }
+      },
+      "FAQ": {
+        "variants": {
+          "PawJoyFAQ1": {
+            "id": "faqs",
+            "tagline": "Frequently Asked Questions",
+            "taglineIcon": "paw",
+            "headingPart1": "Got Questions? ",
+            "headingHighlight": "We've Got Answers",
+            "description": "Find answers to commonly asked questions about our services, booking process, safety protocols, and pet wellness standards.",
+            "image": {
+              "src": "/faq.webp",
+              "alt": "Happy golden retriever and tabby cat resting peacefully together",
+              "badgeText": "Compassionate & Reliable Care",
+              "badgeIcon": "?"
+            },
+            "items": [
+              {
+                "id": "1",
+                "question": "What pet care services does PawJoy offer?",
+                "answer": "We offer a complete suite of pet care services including professional grooming and spa treatments, routine veterinary examinations, daily dog walking, positive reinforcement training, and luxury overnight boarding and daycare."
+              },
+              {
+                "id": "2",
+                "question": "How do I schedule an appointment for my pet?",
+                "answer": "You can easily book online through our contact page or by calling our customer care team directly. We recommend booking in advance, especially during holiday periods and peak weekends."
+              },
+              {
+                "id": "3",
+                "question": "What vaccinations are required before visiting?",
+                "answer": "To protect all pets in our care, dogs must be up to date on Rabies, DHPP, and Bordetella vaccinations. Cats must be current on Rabies and FVRCP. We request vaccination records prior to your first appointment."
+              },
+              {
+                "id": "4",
+                "question": "Can I tour your facility before booking?",
+                "answer": "Yes! We welcome pet parents to visit and tour our state-of-the-art facility during regular business hours to see our play areas, grooming stations, and sleeping suites."
+              },
+              {
+                "id": "5",
+                "question": "How do your staff handle pets with anxiety or special needs?",
+                "answer": "Our certified veterinary assistants and caregivers are trained in low-stress handling methods. We provide quiet, soothing spaces and customized schedules to ensure nervous or senior pets feel completely safe and relaxed."
+              }
+            ],
+            "backgroundPaws": [
+              {
+                "top": "8%",
+                "left": "4%",
+                "rotate": -20,
+                "size": 130,
+                "opacity": 0.95
+              },
+              {
+                "top": "12%",
+                "right": "4%",
+                "rotate": 18,
+                "size": 135,
+                "opacity": 0.95
+              }
+            ]
+          }
+        }
+      },
+      "Contact": {
+        "variants": {
+          "PawJoyContact1": {
+            "id": "contact",
+            "tagline": "Contact Us",
+            "taglineIcon": "paw",
+            "headingPart1": "Schedule an Appointment for Your ",
+            "headingHighlight": "Furry Friend",
+            "descriptionLines": [
+              "Get expert pet care, grooming, and wellness services",
+              "at PawJoy. Book your visit today!"
+            ],
+            "scheduleHours": [
+              {
+                "id": "1",
+                "icon": "stethoscope",
+                "title": "PawJoy Care",
+                "hours": "Monday - Friday : 9 AM to 8 PM"
+              },
+              {
+                "id": "2",
+                "icon": "home",
+                "title": "Daycare",
+                "hours": "Monday - Saturday : 6 AM to 10 PM"
+              }
+            ],
+            "petsImage": {
+              "src": "/contact-pet.webp",
+              "alt": "Golden retriever and tabby cat lying down happily"
+            },
+            "formTitle": "Book an Appointment",
+            "formIcon": "calendar",
+            "form": {
+              "nameLabel": "Name",
+              "namePlaceholder": "Your Name",
+              "petNameLabel": "Pet Name",
+              "petNamePlaceholder": "Your Pet's Name",
+              "dateLabel": "Date",
+              "datePlaceholder": "dd/mm/yyyy",
+              "timeLabel": "Time",
+              "timePlaceholder": "Select Time",
+              "timeOptions": [
+                "Select Time",
+                "09:00 AM",
+                "11:00 AM",
+                "01:00 PM",
+                "03:00 PM",
+                "05:00 PM",
+                "07:00 PM"
+              ],
+              "messageLabel": "Message",
+              "messagePlaceholder": "Write your message here...",
+              "submitButtonText": "Submit Appointment",
+              "successMessage": "Appointment Submitted!"
+            },
+            "backgroundPaws": [
+              {
+                "top": "15%",
+                "left": "38%",
+                "rotate": 12,
+                "size": 110,
+                "opacity": 0.9
+              }
+            ]
+          }
+        }
+      },
+      "Footer": {
+        "variants": {
+          "PawJoyFooter1": {
+            "logo": "/white-logo.png",
+            "logoAlt": "PawJoy Logo",
+            "logoHref": "#home",
+            "scrollToTopAriaLabel": "Scroll to top",
+            "tagline": "Professional Pet Care, Grooming & Wellness Services",
+            "location": "New York City, NY — Brooklyn and Manhattan",
+            "socialLinks": [
+              {
+                "name": "Instagram",
+                "icon": "instagram",
+                "href": "https://instagram.com"
+              },
+              {
+                "name": "Facebook",
+                "icon": "facebook",
+                "href": "https://facebook.com"
+              }
+            ],
+            "quickLinks": [
+              { "name": "Home", "href": "#home" },
+              { "name": "About Us", "href": "#about" },
+              { "name": "Our Services", "href": "#services" },
+              { "name": "Why Choose Us", "href": "#why-choose-us" },
+              { "name": "Gallery", "href": "#gallery" },
+              { "name": "Testimonials", "href": "#testimonials" },
+              { "name": "FAQs", "href": "#faqs" },
+              { "name": "Contact Us", "href": "#contact" }
+            ],
+            "ctaHeading": "Are you ready to get started?",
+            "contactItems": [
+              {
+                "icon": "mail",
+                "label": "Email",
+                "value": "info@xyz.com",
+                "href": "mailto:info@xyz.com"
+              },
+              {
+                "icon": "phone",
+                "label": "Phone",
+                "value": "+1 000-000-000",
+                "href": "tel:+1000000000"
+              }
+            ],
+            "petsImage": {
+              "src": "/footer-pet.webp",
+              "alt": "Happy golden retriever and tabby cat lying down peacefully"
+            },
+            "copyright": "© 2026 PawJoy Pet Care & Wellness. All Rights Reserved."
+          }
+        }
+      }
+    }
+  }
+}
