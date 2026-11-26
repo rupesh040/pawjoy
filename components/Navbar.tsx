@@ -169,8 +169,9 @@ export default function Navbar({ data: customData }: NavbarProps) {
         window.innerHeight + window.scrollY >=
         document.documentElement.scrollHeight - 60;
 
-      let currentActive = "";
       const offset = 140;
+      const entries: { el: Element; name: string }[] = [];
+      const navElements = new Set<Element>();
 
       for (let i = 0; i < links.length; i++) {
         const link = links[i];
@@ -184,18 +185,59 @@ export default function Navbar({ data: customData }: NavbarProps) {
 
         const el = document.getElementById(targetId);
         if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= offset) {
-            currentActive = link.name;
-          }
+          navElements.add(el);
+          entries.push({ el, name: link.name });
         }
       }
 
-      if (isBottom) {
-        currentActive = links[links.length - 1].name;
+      if (headerData.buttonHref?.startsWith("#")) {
+        const btnTarget = document.getElementById(headerData.buttonHref.slice(1));
+        if (btnTarget && !navElements.has(btnTarget)) {
+          navElements.add(btnTarget);
+          entries.push({ el: btnTarget, name: "" });
+        }
       }
 
-      if (currentActive) {
+      const extraRegions = document.querySelectorAll("main > section, footer");
+      extraRegions.forEach((el) => {
+        if (!navElements.has(el)) {
+          navElements.add(el);
+          entries.push({ el, name: "" });
+        }
+      });
+
+      let currentActive = "";
+      let matched = false;
+      let deepestTop = -Infinity;
+
+      for (let i = 0; i < entries.length; i++) {
+        const rect = entries[i].el.getBoundingClientRect();
+        if (rect.height === 0) continue;
+        if (rect.top <= offset && rect.top >= deepestTop) {
+          deepestTop = rect.top;
+          currentActive = entries[i].name;
+          matched = true;
+        }
+      }
+
+      if (isBottom && entries.length > 0) {
+        let bottomMostName = "";
+        let maxTop = -Infinity;
+        for (let i = 0; i < entries.length; i++) {
+          const rect = entries[i].el.getBoundingClientRect();
+          if (rect.height === 0) continue;
+          if (rect.top > maxTop) {
+            maxTop = rect.top;
+            bottomMostName = entries[i].name;
+          }
+        }
+        if (maxTop > -Infinity) {
+          currentActive = bottomMostName;
+          matched = true;
+        }
+      }
+
+      if (matched) {
         setActiveItem(currentActive);
       }
     };
@@ -214,17 +256,26 @@ export default function Navbar({ data: customData }: NavbarProps) {
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("hashchange", updateActive);
     handleScroll();
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("hashchange", updateActive);
       if (spyTimerRef.current) clearTimeout(spyTimerRef.current);
     };
-  }, [headerData.links, releaseSpy]);
+  }, [headerData.links, headerData.buttonHref, releaseSpy]);
 
   const measureActive = useCallback(() => {
+    if (!activeItem) {
+      setActivePill(null);
+      return;
+    }
     const el = linkRefs.current[activeItem];
-    if (!el) return;
+    if (!el) {
+      setActivePill(null);
+      return;
+    }
     const next = { left: el.offsetLeft, width: el.offsetWidth };
     setActivePill((prev) =>
       prev && prev.left === next.left && prev.width === next.width ? prev : next
@@ -309,6 +360,8 @@ export default function Navbar({ data: customData }: NavbarProps) {
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
+    const matchedLink = headerData.links.find((l) => l.href === href);
+    setActiveItem(matchedLink ? matchedLink.name : "");
     if (href.startsWith("#")) lockSpy(true);
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
