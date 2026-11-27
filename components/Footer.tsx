@@ -307,6 +307,9 @@ export default function Footer({ data: customData }: FooterProps) {
   const contactStart = HEADING_START + headingWords * HEADING_STEP + 250;
   const contactCount = footerData.contactItems.length;
   const copyrightDelay = contactStart + contactCount * 240 + 150;
+  const midLinkIndex = Math.ceil(footerData.quickLinks.length / 2);
+  const leftQuickLinks = footerData.quickLinks.slice(0, midLinkIndex);
+  const rightQuickLinks = footerData.quickLinks.slice(midLinkIndex);
  
   return (
     <footer
@@ -376,6 +379,7 @@ export default function Footer({ data: customData }: FooterProps) {
             </div>
           </div>
           <div className="flex flex-col items-center justify-between gap-6 pt-8 text-center lg:flex-row lg:items-start lg:gap-10 lg:pt-9 lg:text-left">
+            <div className="grid w-fit gap-6 sm:contents">
             <div>
               <Reveal
                 as="p"
@@ -395,18 +399,35 @@ export default function Footer({ data: customData }: FooterProps) {
               </Reveal>
             </div>
  
-            <nav className="mx-auto grid w-fit grid-flow-col grid-rows-4 gap-x-10 gap-y-3 text-left sm:mx-0 sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-5 sm:text-center lg:justify-end lg:pt-1 xl:gap-x-7">
-              {footerData.quickLinks.map((link, i) => (
-                <Reveal key={link.name} variant="rise" delay={580 + i * 60}>
-                  <Link
-                    href={link.href}
-                    className="relative inline-block rounded text-[14px] font-medium text-white transition-transform duration-300 after:absolute after:inset-x-0 after:-bottom-[5px] after:h-0.5 after:origin-right after:scale-x-0 after:rounded-sm after:bg-white after:transition-transform after:duration-500 after:ease-[cubic-bezier(.22,1,.36,1)] after:content-[''] hover:-translate-y-0.5 hover:after:origin-left hover:after:scale-x-100 focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80 focus-visible:after:origin-left focus-visible:after:scale-x-100 xl:text-[16px]"
-                  >
-                    {link.name}
-                  </Link>
-                </Reveal>
+            <nav className="grid w-0 min-w-full grid-cols-[1fr_auto_1fr] items-stretch gap-x-6 sm:flex sm:w-auto sm:min-w-0 sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-5 sm:gap-y-3 lg:justify-end lg:pt-1 xl:gap-x-7">
+              {[
+                { links: leftQuickLinks, offset: 0 },
+                { links: rightQuickLinks, offset: midLinkIndex },
+              ].map((group, colIdx) => (
+                <React.Fragment key={colIdx}>
+                  {colIdx > 0 && (
+                    <Reveal
+                      variant="growY"
+                      delay={650}
+                      className="w-[1.5px] shrink-0 self-stretch bg-gradient-to-b from-white/0 via-white to-white/0 sm:hidden"
+                    />
+                  )}
+                  <div className="flex flex-col gap-y-3 text-left sm:contents">
+                    {group.links.map((link, i) => (
+                      <Reveal key={link.name} variant="rise" delay={580 + (group.offset + i) * 60}>
+                        <Link
+                          href={link.href}
+                          className="relative inline-block rounded text-[14px] font-medium text-white transition-transform duration-300 after:absolute after:inset-x-0 after:-bottom-[5px] after:h-0.5 after:origin-right after:scale-x-0 after:rounded-sm after:bg-white after:transition-transform after:duration-500 after:ease-[cubic-bezier(.22,1,.36,1)] after:content-[''] hover:-translate-y-0.5 hover:after:origin-left hover:after:scale-x-100 focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80 focus-visible:after:origin-left focus-visible:after:scale-x-100 xl:text-[16px]"
+                        >
+                          {link.name}
+                        </Link>
+                      </Reveal>
+                    ))}
+                  </div>
+                </React.Fragment>
               ))}
             </nav>
+            </div>
           </div>
           <div className="relative z-10 mt-14 flex flex-col items-center justify-center text-center lg:mt-[84px]">
             <h2 className="mb-7 text-[32px] font-extrabold leading-[1.15] tracking-tight text-white sm:mb-8 sm:text-[44px] lg:text-[52px] xl:text-[56px]">
@@ -487,4 +508,3 @@ export default function Footer({ data: customData }: FooterProps) {
     </footer>
   );
 }
- 
