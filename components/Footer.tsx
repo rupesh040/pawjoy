@@ -311,64 +311,69 @@ export default function Footer({ data: customData }: FooterProps) {
   return (
     <footer
       ref={ref}
-      className="relative isolate w-full overflow-hidden bg-[#850b9c] pt-8 pb-8 text-white sm:pt-9 lg:pb-[88px]"
+      className="relative isolate -mt-4 w-full overflow-hidden bg-[#850b9c] pt-0 pb-8 text-white sm:-mt-6 lg:-mt-8 lg:pb-[88px]"
     >
       <InViewContext.Provider value={inView}>
-        <div className="pointer-events-none absolute -right-24 -top-24 -z-10 h-[360px] w-[360px] rounded-full bg-white/[0.07] blur-3xl" />
+        <div className="pointer-events-none absolute -right-24 top-16 -z-10 h-[360px] w-[360px] rounded-full bg-white/[0.07] blur-3xl" />
         <div className="pointer-events-none absolute -bottom-28 left-1/3 -z-10 h-[300px] w-[300px] rounded-full bg-[#c040e0]/20 blur-3xl" />
         <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-8 lg:px-10">
-          <div className="flex items-center justify-between pb-3 sm:pb-4">
-            <Reveal variant="left" className="shrink-0">
-              <Link
-                href="/"
-                className="inline-block transition-transform duration-300 hover:scale-105"
+          <div className="relative flex items-center gap-1.5 pt-7 sm:pt-11 lg:pt-[54px]">
+            <div className="relative flex-1">
+              <Reveal
+                variant="left"
+                className="absolute bottom-1.5 left-0 shrink-0 sm:bottom-2"
               >
-                <Image
-                  src={footerData.logo}
-                  alt={footerData.logoAlt}
-                  width={230}
-                  height={66}
-                  className="h-12 w-auto object-contain sm:h-14 lg:h-[64px]"
-                  priority
-                />
-              </Link>
-            </Reveal>
-            <div className="flex items-center gap-4 sm:gap-5">
-              {footerData.socialLinks.map((social, i) => (
-                <Reveal key={social.name} variant="spring" delay={120 + i * 100}>
-                  <a
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.name}
-                    className="relative flex h-7 w-7 items-center justify-center text-white transition-transform duration-500 ease-[cubic-bezier(.34,1.56,.64,1)] before:absolute before:-inset-[7px] before:scale-50 before:rounded-full before:bg-white/[0.18] before:opacity-0 before:transition-[transform,opacity] before:duration-[400ms] before:ease-[cubic-bezier(.34,1.56,.64,1)] before:content-[''] hover:-translate-y-[3px] hover:-rotate-[8deg] hover:scale-110 hover:before:scale-100 hover:before:opacity-100 focus-visible:-translate-y-[3px] focus-visible:before:scale-100 focus-visible:before:opacity-100 sm:h-8 sm:w-8"
-                  >
-                    {social.icon === "instagram" && (
-                      <InstagramIcon className="relative h-full w-full" />
-                    )}
-                    {social.icon === "facebook" && (
-                      <FacebookIcon className="relative h-full w-full" />
-                    )}
-                  </a>
-                </Reveal>
-              ))}
+                <Link
+                  href={footerData.logoHref || "/"}
+                  className="inline-block transition-transform duration-300 hover:scale-105"
+                >
+                  <Image
+                    src={footerData.logo}
+                    alt={footerData.logoAlt}
+                    width={230}
+                    height={66}
+                    className="h-9 w-auto object-contain sm:h-14 lg:h-[64px]"
+                    priority
+                  />
+                </Link>
+              </Reveal>
+              <Reveal variant="lineL" delay={200} className="h-[2px] w-full bg-white/95" />
             </div>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Reveal variant="lineL" delay={200} className="h-[2px] flex-1 bg-white/95" />
- 
+
             <Reveal variant="spring" delay={700} className="shrink-0">
               <button
                 type="button"
                 onClick={scrollToTop}
-                aria-label="Scroll to top"
+                aria-label={footerData.scrollToTopAriaLabel || "Scroll to top"}
                 className="group flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white text-[#850b9c] shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80 active:scale-95 sm:h-[38px] sm:w-[38px]"
               >
                 <ChevronUpIcon className="h-5 w-5 text-[#850b9c] transition-transform duration-300 ease-[cubic-bezier(.34,1.56,.64,1)] group-hover:-translate-y-0.5" />
               </button>
             </Reveal>
- 
-            <Reveal variant="lineR" delay={200} className="h-[2px] flex-1 bg-white/95" />
+
+            <div className="relative flex-1">
+              <div className="absolute bottom-1.5 right-0 flex items-center gap-4 sm:bottom-2 sm:gap-5">
+                {footerData.socialLinks.map((social, i) => (
+                  <Reveal key={social.name} variant="spring" delay={120 + i * 100}>
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.name}
+                      className="relative flex h-7 w-7 items-center justify-center text-white transition-transform duration-500 ease-[cubic-bezier(.34,1.56,.64,1)] before:absolute before:-inset-[7px] before:scale-50 before:rounded-full before:bg-white/[0.18] before:opacity-0 before:transition-[transform,opacity] before:duration-[400ms] before:ease-[cubic-bezier(.34,1.56,.64,1)] before:content-[''] hover:-translate-y-[3px] hover:-rotate-[8deg] hover:scale-110 hover:before:scale-100 hover:before:opacity-100 focus-visible:-translate-y-[3px] focus-visible:before:scale-100 focus-visible:before:opacity-100 sm:h-8 sm:w-8"
+                    >
+                      {social.icon === "instagram" && (
+                        <InstagramIcon className="relative h-full w-full" />
+                      )}
+                      {social.icon === "facebook" && (
+                        <FacebookIcon className="relative h-full w-full" />
+                      )}
+                    </a>
+                  </Reveal>
+                ))}
+              </div>
+              <Reveal variant="lineR" delay={200} className="h-[2px] w-full bg-white/95" />
+            </div>
           </div>
           <div className="flex flex-col items-center justify-between gap-6 pt-8 text-center lg:flex-row lg:items-start lg:gap-10 lg:pt-9 lg:text-left">
             <div>
@@ -390,7 +395,7 @@ export default function Footer({ data: customData }: FooterProps) {
               </Reveal>
             </div>
  
-            <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 lg:justify-end lg:pt-1 xl:gap-x-7">
+            <nav className="mx-auto grid w-fit grid-flow-col grid-rows-4 gap-x-10 gap-y-3 text-left sm:mx-0 sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-5 sm:text-center lg:justify-end lg:pt-1 xl:gap-x-7">
               {footerData.quickLinks.map((link, i) => (
                 <Reveal key={link.name} variant="rise" delay={580 + i * 60}>
                   <Link
@@ -417,7 +422,7 @@ export default function Footer({ data: customData }: FooterProps) {
               </span>
             </h2>
  
-            <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:gap-10 lg:gap-14">
+            <div className="mx-auto flex w-fit flex-col items-start justify-center gap-5 sm:w-auto sm:flex-row sm:items-center sm:gap-10 lg:gap-14">
               {footerData.contactItems.map((item, idx) => {
                 const isLast = idx === contactCount - 1;
                 const base = contactStart + idx * 240;

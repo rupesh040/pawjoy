@@ -557,7 +557,7 @@ export default function Services({ data: customData }: ServicesProps) {
             <span className="sv-hx sv-line-r w-10 sm:w-14 h-[1.5px] bg-[#8B1EB7]/60 rounded-full" />
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#2E004F] tracking-tight leading-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#2E004F] tracking-tight leading-tight mb-4 sm:mb-5">
             <span className="sr-only">
               {servicesData.headingPart1}
               {servicesData.headingHighlight}
@@ -614,17 +614,19 @@ export default function Services({ data: customData }: ServicesProps) {
             </span>
           </h2>
 
-          <div className="space-y-1">
+          <p
+            style={d(0.9)}
+            className="sv-hx sv-wipe max-w-[340px] sm:max-w-lg md:max-w-none mx-auto px-2 sm:px-0 text-[#4A2E5B] text-sm sm:text-base font-medium leading-relaxed text-balance"
+          >
             {servicesData.descriptionLines.map((line, idx) => (
-              <p
-                key={idx}
-                style={d(0.9 + idx * 0.18)}
-                className="sv-hx sv-wipe text-[#4A2E5B] text-sm sm:text-base font-medium leading-relaxed"
-              >
-                {line}
-              </p>
+              <React.Fragment key={idx}>
+                <span className="inline md:block">{line}</span>
+                {idx < servicesData.descriptionLines.length - 1 ? (
+                  <span className="md:hidden"> </span>
+                ) : null}
+              </React.Fragment>
             ))}
-          </div>
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-8 items-start pb-8 md:pb-32">

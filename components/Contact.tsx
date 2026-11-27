@@ -94,23 +94,15 @@ const ANIMATION_CSS = `
 .pj-row-bar{transition:background-color .3s}
 .pj-row:hover .pj-row-bar{background-color:#C94EE6}
 
-.pj-bob{animation:pj-bob 6s ease-in-out infinite;will-change:transform}
-@keyframes pj-bob{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-10px,0)}}
 .pj-shadow{
   position:absolute;left:18%;right:18%;bottom:-6px;height:14px;border-radius:50%;
   background:radial-gradient(ellipse at center,rgba(65,0,80,.22),transparent 70%);
-  animation:pj-shadow 6s ease-in-out infinite;
 }
-@keyframes pj-shadow{0%,100%{transform:scaleX(1);opacity:.9}50%{transform:scaleX(.82);opacity:.55}}
 .pj-img{transition:transform .6s var(--pj-spring)}
 .pj-pets:hover .pj-img{transform:scale(1.04) rotate(-1deg)}
 
 .pj-breathe{animation:pj-breathe 9s ease-in-out infinite}
 @keyframes pj-breathe{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.14);opacity:.75}}
-.pj-wave-a{transform-origin:50% 100%;animation:pj-wave-a 8s ease-in-out infinite}
-.pj-wave-b{transform-origin:50% 100%;animation:pj-wave-b 11s ease-in-out infinite}
-@keyframes pj-wave-a{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.07)}}
-@keyframes pj-wave-b{0%,100%{transform:scaleY(1.06)}50%{transform:scaleY(.93)}}
 .pj-riser{position:absolute;bottom:18px;opacity:0;animation:pj-riser 10s ease-in-out infinite;will-change:transform,opacity}
 @keyframes pj-riser{
   0%{opacity:0;transform:translate3d(0,0,0) rotate(-10deg)}
@@ -433,7 +425,7 @@ export default function Contact({ data: customData }: ContactProps) {
   return (
     <section
       id={contactData.id || "contact"}
-      className="pj-root relative isolate w-full min-h-[790px] overflow-hidden bg-[#FFFCFF] pt-6 pb-28 sm:pt-8 lg:pt-5 lg:pb-32"
+      className="pj-root relative isolate w-full overflow-hidden bg-[#FFFCFF] pt-6 pb-14 sm:pt-8 sm:pb-16 lg:pt-5 lg:pb-16"
     >
       <style dangerouslySetInnerHTML={{ __html: ANIMATION_CSS }} />
 
@@ -464,7 +456,7 @@ export default function Contact({ data: customData }: ContactProps) {
         <svg
           viewBox="0 0 1500 250"
           preserveAspectRatio="none"
-          className="pj-wave-b absolute inset-0 h-full w-full"
+          className="absolute inset-0 h-full w-full"
           fill="none"
           aria-hidden="true"
         >
@@ -478,20 +470,13 @@ export default function Contact({ data: customData }: ContactProps) {
         <svg
           viewBox="0 0 1500 250"
           preserveAspectRatio="none"
-          className="pj-wave-a absolute inset-0 h-full w-full"
+          className="absolute inset-0 h-full w-full"
           fill="none"
           aria-hidden="true"
         >
-          <defs>
-            <linearGradient id="pawWave" x1="0" y1="0" x2="1500" y2="250" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#7B079E" />
-              <stop offset=".55" stopColor="#9500B8" />
-              <stop offset="1" stopColor="#72008E" />
-            </linearGradient>
-          </defs>
           <path
             d="M0 48 C160 100 225 160 380 137 C550 115 650 140 820 177 C1030 230 1180 188 1500 125 V250 H0 Z"
-            fill="url(#pawWave)"
+            fill="#850b9c"
           />
         </svg>
       </div>
@@ -613,7 +598,7 @@ export default function Contact({ data: customData }: ContactProps) {
             className="pj-pets pj-reveal pj-pop relative z-10 mt-6 w-full max-w-[340px] sm:max-w-[400px] lg:max-w-[440px] self-start lg:-ml-2"
           >
             <div className="pj-shadow" aria-hidden="true" />
-            <div className="pj-bob relative">
+            <div className="relative">
               <Image
                 src={contactData.petsImage.src}
                 alt={contactData.petsImage.alt}

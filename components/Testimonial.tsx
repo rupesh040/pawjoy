@@ -585,7 +585,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
           </div>
 
           <h2
-            className="text-[26px] sm:text-[36px] md:text-[40px] lg:text-[43px] font-extrabold text-[#39004D] leading-[1.15] tracking-[-0.035em] mb-2"
+            className="text-[26px] sm:text-[36px] md:text-[40px] lg:text-[43px] font-extrabold text-[#39004D] leading-[1.15] tracking-[-0.035em] mb-5 sm:mb-6"
             style={{ "--wb": "#9014B7", "--wp": "#d58cff" } as React.CSSProperties}
           >
             <span className="sr-only">
@@ -610,7 +610,7 @@ export default function Testimonial({ data: customData }: TestimonialProps) {
                   viewBox="0 0 300 14"
                   preserveAspectRatio="none"
                   aria-hidden
-                  className="tm-underline pointer-events-none absolute left-[2%] -bottom-1 sm:-bottom-2 h-2 sm:h-3 w-[96%]"
+                  className="tm-underline pointer-events-none absolute left-[2%] -bottom-3 sm:-bottom-4 h-2 sm:h-3 w-[96%]"
                   style={dv(underlineDelay)}
                 >
                   <path

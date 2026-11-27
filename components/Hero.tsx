@@ -543,31 +543,34 @@ export default function Hero({ data: customData }: HeroProps) {
           </div>
         </div>
 
-        <div className="text-center max-w-[700px] mx-auto mb-8 sm:mb-10">
-          {heroData.descriptionLines.map((line, idx) => (
-            <p
-              key={idx}
-              className="text-[#414141] text-[15px] sm:text-[18px] md:text-[20px] lg:text-[22px] font-medium leading-[1.55] tracking-tight"
-            >
-              {line
-                .trim()
-                .split(/\s+/)
-                .filter(Boolean)
-                .map((w, wi, arr) => (
-                  <React.Fragment key={wi}>
-                    <span
-                      className="hx-word"
-                      style={{
-                        "--d": `${0.75 + idx * 0.3 + wi * 0.05}s`,
-                      } as React.CSSProperties}
-                    >
-                      {w}
-                    </span>
-                    {wi < arr.length - 1 ? " " : ""}
-                  </React.Fragment>
-                ))}
-            </p>
-          ))}
+        <div className="text-center max-w-[340px] sm:max-w-[700px] mx-auto px-2 sm:px-0 mb-7 sm:mb-10">
+          <p className="text-[#414141] text-[15px] sm:text-[18px] md:text-[20px] lg:text-[22px] font-medium leading-[1.6] sm:leading-[1.55] tracking-tight text-balance">
+            {heroData.descriptionLines.map((line, idx) => {
+              const lineWords = line.trim().split(/\s+/).filter(Boolean);
+              return (
+                <React.Fragment key={idx}>
+                  <span className="inline sm:block">
+                    {lineWords.map((w, wi) => (
+                      <React.Fragment key={wi}>
+                        <span
+                          className="hx-word"
+                          style={{
+                            "--d": `${0.75 + idx * 0.3 + wi * 0.05}s`,
+                          } as React.CSSProperties}
+                        >
+                          {w}
+                        </span>
+                        {wi < lineWords.length - 1 ? " " : ""}
+                      </React.Fragment>
+                    ))}
+                  </span>
+                  {idx < heroData.descriptionLines.length - 1 ? (
+                    <span className="sm:hidden"> </span>
+                  ) : null}
+                </React.Fragment>
+              );
+            })}
+          </p>
         </div>
 
         <div className="hx-strip w-full max-w-[1250px] mx-auto mb-6 sm:mb-7 md:drop-shadow-[0_8px_18px_rgba(65,0,85,0.09)]">
